@@ -2,23 +2,23 @@ name: Quick Checks
 
 on:
   push:
-    branches: [ copilot/** ]
+    branches: [copilot/**]
   pull_request:
 
 jobs:
   quick-lint:
     name: Quick Lint & Syntax Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-      
+
       - name: PHP Syntax Check
         run: |
           echo "🔍 Checking PHP syntax..."
@@ -32,28 +32,28 @@ jobs:
               echo "✅ $file"
             fi
           done < <(find . -name "*.php" -type f -print0)
-          
+
           if [ $ERROR_COUNT -eq 0 ]; then
             echo "✅ All PHP files passed syntax check"
           else
             echo "❌ Found $ERROR_COUNT file(s) with syntax errors"
             exit 1
           fi
-      
+
       - name: Check YAML syntax
         run: |
           echo "🔍 Checking YAML syntax..."
           pip install yamllint
           yamllint -d relaxed $(find . -name "*.yml" -type f) || echo "⚠️ YAML warnings found"
-      
+
       - name: Check for common issues
         run: |
           echo "🔍 Checking for common issues..."
-          
+
           # Check for TODO/FIXME comments
           echo "Checking for TODO/FIXME..."
           grep -r "TODO\|FIXME" --include="*.php" src/ || echo "✅ No TODO/FIXME found"
-          
+
           # Check for var_dump/print_r
           echo "Checking for debug statements..."
           if grep -r "var_dump\|print_r\|dd(" --include="*.php" src/; then
@@ -61,22 +61,22 @@ jobs:
           else
             echo "✅ No debug statements found"
           fi
-          
+
           # Check file permissions
           echo "Checking file permissions..."
           find . -type f -name "*.php" -executable -ls || echo "✅ No executable PHP files"
-      
+
       - name: Summary
         if: always()
         run: |
           cat << 'EOF'
-          
+
           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          
+
           ✨ Quick Checks Complete
-          
-          For full testing including Drupal installation and 
+
+          For full testing including Drupal installation and
           visual verification, see the "Drupal Module Tests" workflow.
-          
+
           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           EOF
