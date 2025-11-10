@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Beta Tender module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function beta_tender_install() {
+  // Set default OCR backend to document_ocr if available.
+  $config = \Drupal::configFactory()->getEditable('beta_tender.settings');
+  
+  if (\Drupal::moduleHandler()->moduleExists('document_ocr')) {
+    $config->set('ocr_backend', 'document_ocr');
+  }
+  elseif (\Drupal::moduleHandler()->moduleExists('ocr_image')) {
+    $config->set('ocr_backend', 'ocr_image');
+  }
+  
+  $config->save();
+  
+  \Drupal::messenger()->addStatus(t('Beta Tender module has been installed. Please configure the module at <a href=":url">Beta Tender Settings</a>.', [
+    ':url' => '/admin/config/beta_tender',
+  ]));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function beta_tender_uninstall() {
+  // Clean up configuration.
+  \Drupal::configFactory()->getEditable('beta_tender.settings')->delete();
+  
+  \Drupal::messenger()->addStatus(t('Beta Tender module has been uninstalled.'));
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function beta_tender_requirements($phase) {
+  $requirements = [];
+  
+  if ($phase == 'runtime') {
+    $config = \Drupal::config('beta_tender.settings');
+    $ocr_backend = $config->get('ocr_backend');
+    
+    $requirements['beta_tender_ocr'] = [
+      'title' => t('Beta Tender OCR Backend'),
+    ];
+    
+    if (empty($ocr_backend)) {
+      $requirements['beta_tender_ocr']['value'] = t('Not configured');
+      $requirements['beta_tender_ocr']['severity'] = REQUIREMENT_WARNING;
+      $requirements['beta_tender_ocr']['description'] = t('No OCR backend has been configured. Please configure at <a href=":url">Beta Tender Settings</a>.', [
+        ':url' => '/admin/config/beta_tender',
+      ]);
+    }
+    else {
+      $module_exists = \Drupal::moduleHandler()->moduleExists($ocr_backend);
+      
+      if ($module_exists) {
+        $requirements['beta_tender_ocr']['value'] = t('Using @backend', ['@backend' => $ocr_backend]);
+        $requirements['beta_tender_ocr']['severity'] = REQUIREMENT_OK;
+      }
+      else {
+        $requirements['beta_tender_ocr']['value'] = t('Backend not available');
+        $requirements['beta_tender_ocr']['severity'] = REQUIREMENT_ERROR;
+        $requirements['beta_tender_ocr']['description'] = t('The configured OCR backend (@backend) is not installed or enabled.', [
+          '@backend' => $ocr_backend,
+        ]);
+      }
+    }
+    
+    // Check for entity_share module.
+    if (!\Drupal::moduleHandler()->moduleExists('entity_share')) {
+      $requirements['beta_tender_entity_share'] = [
+        'title' => t('Beta Tender Entity Share'),
+        'value' => t('Not installed'),
+        'severity' => REQUIREMENT_WARNING,
+        'description' => t('The Entity Share module is required for content synchronization features. Please install and enable it.'),
+      ];
+    }
+  }
+  
+  return $requirements;
+}

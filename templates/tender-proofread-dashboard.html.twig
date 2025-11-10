@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * Template for the proofreading dashboard.
+ *
+ * Available variables:
+ * - filters: Array of status filters.
+ * - tenders: Array of tenders grouped by status.
+ */
+#}
+<div class="tender-proofread-dashboard">
+  <h2>{{ 'Proofread Tenders'|t }}</h2>
+  
+  <div class="dashboard-tabs">
+    {% for status, data in tenders %}
+      <details class="status-group" {% if status == 'needs_review' %}open{% endif %}>
+        <summary>
+          <strong>{{ data.label }}</strong>
+          <span class="count">({{ data.count }})</span>
+        </summary>
+        
+        {% if data.tenders is empty %}
+          <p>{{ 'No tenders with this status.'|t }}</p>
+        {% else %}
+          <table class="tenders-table">
+            <thead>
+              <tr>
+                <th>{{ 'Title'|t }}</th>
+                <th>{{ 'Source'|t }}</th>
+                <th>{{ 'Assigned Editor'|t }}</th>
+                <th>{{ 'Actions'|t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tender in data.tenders %}
+                <tr>
+                  <td>{{ tender.title }}</td>
+                  <td>{{ tender.source }}</td>
+                  <td>{{ tender.editor }}</td>
+                  <td>
+                    <a href="{{ tender.url }}">{{ 'Edit'|t }}</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      </details>
+    {% endfor %}
+  </div>
+</div>

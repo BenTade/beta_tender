@@ -1,0 +1,4 @@
+ocr_backend: ''
+ocr_settings:
+  document_ocr: {  }
+  ocr_image: {  }

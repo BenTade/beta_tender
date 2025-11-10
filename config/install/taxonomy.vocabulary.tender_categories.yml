@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Tender Categories'
+vid: tender_categories
+description: 'Categories for classifying tenders (e.g., Construction, IT, Services)'
+weight: 0

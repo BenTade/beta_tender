@@ -1,0 +1,24 @@
+'administer beta tender':
+  title: 'Administer Beta Tender'
+  description: 'Configure Beta Tender module settings and manage OCR backend'
+  restrict access: true
+
+'access tender dashboard':
+  title: 'Access Tender Dashboard'
+  description: 'Access the image processing dashboard'
+
+'process tender images':
+  title: 'Process Tender Images'
+  description: 'Upload and process scanned images for tenders'
+
+'proofread tenders':
+  title: 'Proofread Tenders'
+  description: 'Access proofreading dashboard and review tenders'
+
+'assign tenders':
+  title: 'Assign Tenders'
+  description: 'Assign tenders to editors for proofreading'
+
+'share tenders':
+  title: 'Share Tenders'
+  description: 'Synchronize tenders to production site using Entity Share'

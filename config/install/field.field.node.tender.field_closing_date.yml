@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_closing_date
+    - node.type.tender
+  module:
+    - datetime
+id: node.tender.field_closing_date
+field_name: field_closing_date
+entity_type: node
+bundle: tender
+label: 'Closing Date'
+description: 'The date when the tender closes'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
