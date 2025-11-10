@@ -1,5 +1,11 @@
 # Beta Tender Module
 
+[![Drupal Module Tests](https://github.com/BenTade/beta_tender/workflows/Drupal%20Module%20Tests/badge.svg)](https://github.com/BenTade/beta_tender/actions/workflows/drupal-module-tests.yml)
+[![Quick Checks](https://github.com/BenTade/beta_tender/workflows/Quick%20Checks/badge.svg)](https://github.com/BenTade/beta_tender/actions/workflows/quick-checks.yml)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://www.php.net/)
+[![Drupal](https://img.shields.io/badge/Drupal-11.x-blue.svg)](https://www.drupal.org/)
+[![License](https://img.shields.io/badge/License-GPL--2.0--or--later-green.svg)](LICENSE.txt)
+
 A comprehensive Drupal 11 module for managing the creation of Tender content from scanned images.
 
 ## Features
@@ -161,6 +167,20 @@ Basic test suite structure is included for:
 - Functional tests for workflows
 
 Run tests with: `drush test-run beta_tender`
+
+### Continuous Integration
+
+The module includes comprehensive GitHub Actions workflows for automated testing:
+
+- ✅ **PHP Syntax Validation** - Checks all PHP files for syntax errors
+- 📋 **Drupal Coding Standards** - PHPCS validation with Drupal standards
+- 📄 **YAML Validation** - Configuration file syntax checking
+- 🚀 **Module Installation** - Tests module enables successfully in Drupal 11
+- 🧪 **PHPUnit Tests** - Runs complete test suite
+- 📸 **Visual Verification** - Captures screenshots of module UI
+- 📊 **Test Reports** - Generates detailed reports with artifacts
+
+All tests run automatically on push and pull requests. Check the [Actions tab](../../actions) for results, or see [`.github/workflows/README.md`](.github/workflows/README.md) for details.
 
 ## Troubleshooting
 
