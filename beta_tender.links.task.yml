@@ -16,10 +16,8 @@ beta_tender.proofread_tab:
   title: 'Proofread Tenders'
   weight: 2
 
-# Note: Share Tenders tab will be configured to link to Entity Share UI
-# This requires Entity Share module to be enabled
 beta_tender.share_tab:
-  route_name: entity_share.admin_content
+  route_name: beta_tender.share
   parent_id: beta_tender.tender_tab
   title: 'Share Tenders'
   weight: 3

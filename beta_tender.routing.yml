@@ -50,3 +50,11 @@ beta_tender.process_batch:
     _title: 'Process Tender Batch'
   requirements:
     _permission: 'process tender images'
+
+beta_tender.share:
+  path: '/admin/content/tender/share'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\ShareController::shareDashboard'
+    _title: 'Share Tenders'
+  requirements:
+    _permission: 'share tenders'
