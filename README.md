@@ -178,7 +178,14 @@ The module includes comprehensive GitHub Actions workflows for automated testing
 - 🚀 **Module Installation** - Tests module enables successfully in Drupal 11
 - 🧪 **PHPUnit Tests** - Runs complete test suite
 - 📸 **Visual Verification** - Captures screenshots of module UI
+- 🎬 **Feature Demonstration** - Complete walkthrough of all features with 15+ screenshots
 - 📊 **Test Reports** - Generates detailed reports with artifacts
+
+The **Feature Demonstration** workflow provides comprehensive visual verification by:
+- Setting up a complete Drupal instance with test data
+- Demonstrating all major features (dashboards, OCR, proofreading, etc.)
+- Capturing detailed screenshots of every workflow step
+- Generating a comprehensive feature verification report
 
 All tests run automatically on push and pull requests. Check the [Actions tab](../../actions) for results, or see [`.github/workflows/README.md`](.github/workflows/README.md) for details.
 

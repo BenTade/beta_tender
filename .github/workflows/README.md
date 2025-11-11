@@ -70,6 +70,59 @@ This directory contains automated testing workflows for the Beta Tender Drupal m
 
 Runs quickly on every push to provide immediate feedback.
 
+### 3. Feature Demonstration (`feature-demonstration.yml`) ⭐ NEW
+
+**Comprehensive feature walkthrough** that demonstrates all module features in action with visual verification.
+
+#### What It Does:
+
+1. **Full Environment Setup** 🚀
+   - Installs Drupal 11 with MySQL
+   - Enables Beta Tender module
+   - Creates complete test data environment
+
+2. **Test Data Creation** 📊
+   - Creates 3 taxonomy vocabularies (Sources, Categories, Regions)
+   - Generates 15+ taxonomy terms
+   - Creates 5 sample scanned images
+   - Generates 3 sample tender nodes with OCR text
+
+3. **Comprehensive Visual Walkthrough** 📸
+   - Captures 15+ detailed screenshots
+   - Demonstrates all major features:
+     - User authentication
+     - Admin dashboard integration
+     - Content management
+     - Tender content type configuration
+     - Image processing dashboard
+     - Proofreading workflow
+     - Module configuration
+     - Taxonomy management
+     - Permissions and security
+     - System integration
+   - Tests real-world workflows and behaviors
+
+4. **Detailed Reporting** 📝
+   - Generates comprehensive feature report
+   - Includes verification checklist
+   - Documents all demonstrated workflows
+   - Provides screenshot index
+
+#### Artifacts Generated:
+
+- `feature-demonstration-screenshots/` - 15+ UI screenshots showing all features
+- `feature-demonstration-report/` - Comprehensive analysis and verification checklist
+- `feature-demo-logs/` - Execution logs and test data setup details
+
+#### When to Use:
+
+- ✅ **Pull Requests** - Verify all features work correctly
+- ✅ **Major Changes** - Visual proof of functionality
+- ✅ **Documentation** - Screenshots for user guides
+- ✅ **Stakeholder Demos** - Show features in action
+
+**See [FEATURE_DEMO_GUIDE.md](../FEATURE_DEMO_GUIDE.md) for complete usage guide.**
+
 ## 📊 Status Badges
 
 Add these badges to your README.md to show CI status:
@@ -77,6 +130,7 @@ Add these badges to your README.md to show CI status:
 ```markdown
 ![Drupal Module Tests](https://github.com/BenTade/beta_tender/workflows/Drupal%20Module%20Tests/badge.svg)
 ![Quick Checks](https://github.com/BenTade/beta_tender/workflows/Quick%20Checks/badge.svg)
+![Feature Demo](https://github.com/BenTade/beta_tender/workflows/Feature%20Demonstration%20with%20Visual%20Verification/badge.svg)
 ```
 
 ## 🎯 How to Use
