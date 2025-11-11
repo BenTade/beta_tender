@@ -34,6 +34,7 @@ jobs:
           path: beta_tender
 
       - name: Setup PHP
+        # Ensure PHP >= 8.3 for Drupal 11.x (drupal/core 11.1.0 requires PHP >= 8.3)
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -548,7 +549,7 @@ jobs:
               # Extract step number and name from filename
               step=$(echo "$file" | sed 's/-.*//')
               name=$(echo "$file" | sed 's/^[0-9]*-//' | sed 's/\.png$//')
-              echo "- **Step $step**: \\$file - ${name^}" >> reports/feature-demonstration-report.md
+              echo "- **Step $step**: \$file - ${name^}" >> reports/feature-demonstration-report.md
             done
             
             echo "" >> reports/feature-demonstration-report.md
