@@ -66,19 +66,19 @@ jobs:
           # Drupal Coding Standards Report
 
           ## Drupal Standard
-          \`\`\`
+          ```
           $(cat reports/phpcs-drupal.txt || echo "No issues found")
-          \`\`\`
+          ```
 
           ## Drupal Practice
-          \`\`\`
+          ```
           $(cat reports/phpcs-practice.txt || echo "No issues found")
-          \`\`\`
+          ```
           EOF
 
       - name: Upload PHPCS Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: phpcs-reports
           path: reports/
@@ -188,24 +188,24 @@ jobs:
           # Module Installation Report
 
           ## Installation Log
-          \`\`\`
+          ```
           $(cat module-install.log || echo "No log available")
-          \`\`\`
+          ```
 
           ## Module Status
-          \`\`\`
+          ```
           $(./vendor/bin/drush pm:list --type=module --filter=beta_tender || echo "Module not found")
-          \`\`\`
+          ```
 
           ## Drupal Status
-          \`\`\`
+          ```
           $(./vendor/bin/drush status || echo "Status unavailable")
-          \`\`\`
+          ```
           EOF
 
       - name: Upload installation report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: installation-report
           path: reports/
@@ -272,14 +272,14 @@ jobs:
           cat > reports/phpunit-report.md << 'EOF'
           # PHPUnit Test Results
 
-          \`\`\`
+          ```
           $(cat test-results.txt || echo "No test results available")
-          \`\`\`
+          ```
           EOF
 
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: phpunit-report
           path: reports/
@@ -295,7 +295,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Generate visual summary
         run: |
@@ -337,15 +337,15 @@ jobs:
           cat > summary/README.md << 'EOF'
           # Beta Tender Module - CI Status
 
-          ![PHP Syntax](https://img.shields.io/badge/PHP%20Syntax-${{ needs.php-syntax.result == 'success' && 'passing' || 'failing' }}-${{ needs.php-syntax.result == 'success' && 'brightgreen' || 'red' }})
-          ![Coding Standards](https://img.shields.io/badge/Coding%20Standards-${{ needs.drupal-coding-standards.result == 'success' && 'passing' || 'warnings' }}-${{ needs.drupal-coding-standards.result == 'success' && 'brightgreen' || 'yellow' }})
-          ![Module Install](https://img.shields.io/badge/Module%20Install-${{ needs.drupal-module-install.result == 'success' && 'passing' || 'failing' }}-${{ needs.drupal-module-install.result == 'success' && 'brightgreen' || 'red' }})
+          ![PHP Syntax](https://img.shields.io/badge/PHP%20Syntax-${{ needs.php-syntax.result == 'success' && 'passing' || 'failing' }}-${{ needs.php-syntax.result == 'success' && 'brightgreen' |[...]
+          ![Coding Standards](https://img.shields.io/badge/Coding%20Standards-${{ needs.drupal-coding-standards.result == 'success' && 'passing' || 'warnings' }}-${{ needs.drupal-coding-standards[...]
+          ![Module Install](https://img.shields.io/badge/Module%20Install-${{ needs.drupal-module-install.result == 'success' && 'passing' || 'failing' }}-${{ needs.drupal-module-install.result =[...]
 
           All tests have been executed. Check the artifacts for detailed reports.
           EOF
 
       - name: Upload summary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-summary
           path: summary/
@@ -531,14 +531,14 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: visual-screenshots
           path: screenshots/
 
       - name: Upload visual report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: visual-report
           path: reports/
