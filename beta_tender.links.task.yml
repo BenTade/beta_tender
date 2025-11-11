@@ -1,0 +1,23 @@
+beta_tender.tender_tab:
+  route_name: beta_tender.dashboard
+  title: 'Tender'
+  base_route: system.admin_content
+  weight: 10
+
+beta_tender.dashboard_tab:
+  route_name: beta_tender.dashboard
+  parent_id: beta_tender.tender_tab
+  title: 'Image Processing Dashboard'
+  weight: 1
+
+beta_tender.proofread_tab:
+  route_name: beta_tender.proofread
+  parent_id: beta_tender.tender_tab
+  title: 'Proofread Tenders'
+  weight: 2
+
+beta_tender.share_tab:
+  route_name: beta_tender.share
+  parent_id: beta_tender.tender_tab
+  title: 'Share Tenders'
+  weight: 3

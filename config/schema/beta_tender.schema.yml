@@ -1,0 +1,19 @@
+# Schema for the configuration files of the Beta Tender module.
+
+beta_tender.settings:
+  type: config_object
+  label: 'Beta Tender settings'
+  mapping:
+    ocr_backend:
+      type: string
+      label: 'OCR Backend'
+    ocr_settings:
+      type: mapping
+      label: 'OCR Settings'
+      mapping:
+        document_ocr:
+          type: mapping
+          label: 'Document OCR Settings'
+        ocr_image:
+          type: mapping
+          label: 'OCR Image Settings'

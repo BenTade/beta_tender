@@ -1,0 +1,71 @@
+/**
+ * @file
+ * Styles for the tender dashboard.
+ */
+
+.tender-dashboard {
+  padding: 1rem;
+}
+
+.dashboard-dates {
+  margin-top: 1rem;
+}
+
+.dashboard-date-group {
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.dashboard-date-group summary {
+  cursor: pointer;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  font-size: 1.1rem;
+}
+
+.dashboard-date-group summary:hover {
+  background: #e5e5e5;
+}
+
+.date-code {
+  color: #666;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.sources-list {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+}
+
+.source-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.source-item:last-child {
+  border-bottom: none;
+}
+
+.source-link {
+  text-decoration: none;
+  color: #0071b9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.source-link:hover {
+  text-decoration: underline;
+}
+
+.source-name {
+  font-weight: 500;
+}
+
+.source-counts {
+  color: #666;
+  font-size: 0.9rem;
+}

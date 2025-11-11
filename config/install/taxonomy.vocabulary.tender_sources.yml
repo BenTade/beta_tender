@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Tender Sources'
+vid: tender_sources
+description: 'Sources of tender scans (e.g., newspapers, publications)'
+weight: 0

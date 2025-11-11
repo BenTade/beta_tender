@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Main module file for Beta Tender.
+ *
+ * Provides functionality for managing Tender content creation from scanned
+ * images, including OCR processing, proofreading workflows, and content
+ * synchronization.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function beta_tender_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.beta_tender':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Beta Tender module provides a comprehensive workflow for creating Tender content from scanned images. It includes image processing, OCR integration, proofreading dashboards, and content synchronization capabilities.') . '</p>';
+      $output .= '<h3>' . t('Features') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Image Processing Dashboard') . '</dt>';
+      $output .= '<dd>' . t('Manage and organize scanned images by date and source, with drag-and-drop functionality to group images into tenders.') . '</dd>';
+      $output .= '<dt>' . t('OCR Integration') . '</dt>';
+      $output .= '<dd>' . t('Process images using either document_ocr or ocr_image modules to extract text from scanned documents.') . '</dd>';
+      $output .= '<dt>' . t('Proofreading Workflow') . '</dt>';
+      $output .= '<dd>' . t('Assign tenders to editors for review and track their status through the proofreading dashboard.') . '</dd>';
+      $output .= '<dt>' . t('Content Synchronization') . '</dt>';
+      $output .= '<dd>' . t('Use Entity Share to push approved tenders to production websites.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function beta_tender_theme() {
+  return [
+    'tender_dashboard' => [
+      'variables' => [
+        'dates' => [],
+        'sources_by_date' => [],
+      ],
+    ],
+    'tender_image_arrangement' => [
+      'variables' => [
+        'date' => NULL,
+        'source' => NULL,
+        'created_tenders' => [],
+        'unprocessed_images' => [],
+        'form' => NULL,
+      ],
+    ],
+    'tender_proofread_dashboard' => [
+      'variables' => [
+        'filters' => [],
+        'tenders' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function beta_tender_entity_type_alter(array &$entity_types) {
+  // Add custom handlers if needed for tender content type.
+}

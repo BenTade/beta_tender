@@ -1,0 +1,6 @@
+beta_tender.settings:
+  title: 'Beta Tender Settings'
+  description: 'Configure Beta Tender module including OCR backend selection'
+  parent: system.admin_config_content
+  route_name: beta_tender.settings
+  weight: 10

@@ -1,0 +1,25 @@
+{
+  "name": "drupal/beta_tender",
+  "description": "Manages the creation of Tender content from scanned images, featuring an image processing dashboard, bulk OCR, and a proofreading workflow.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "keywords": ["Drupal", "tender", "OCR", "image processing", "batch"],
+  "homepage": "https://github.com/BenTade/beta_tender",
+  "authors": [
+    {
+      "name": "BenTade",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/BenTade/beta_tender/issues",
+    "source": "https://github.com/BenTade/beta_tender"
+  },
+  "require": {
+    "php": ">=8.1",
+    "drupal/core": "^11"
+  },
+  "require-dev": {
+    "drupal/core-dev": "^11"
+  }
+}

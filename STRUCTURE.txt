@@ -1,0 +1,134 @@
+Beta Tender Module - Complete Structure
+========================================
+
+Root Directory:
+├── README.md                           # User documentation and usage guide
+├── INSTALL.md                          # Detailed installation instructions  
+├── MODULE_SUMMARY.md                   # Technical architecture documentation
+├── CHANGELOG.md                        # Version history
+├── LICENSE.txt                         # GPL-2.0-or-later license
+├── composer.json                       # Composer package definition
+├── .gitignore                          # Git ignore patterns
+│
+├── beta_tender.info.yml                # Module definition and dependencies
+├── beta_tender.module                  # Hook implementations
+├── beta_tender.install                 # Install/uninstall hooks
+├── beta_tender.routing.yml             # Route definitions (6 routes)
+├── beta_tender.services.yml            # Service container (3 services)
+├── beta_tender.permissions.yml         # Permission definitions (6 permissions)
+├── beta_tender.links.task.yml          # Local task tabs (4 tabs)
+├── beta_tender.links.menu.yml          # Admin menu links
+├── beta_tender.libraries.yml           # Asset libraries (3 libraries)
+│
+├── config/
+│   ├── install/                        # Installation configuration
+│   │   ├── beta_tender.settings.yml    # Module settings
+│   │   ├── node.type.tender.yml        # Tender content type
+│   │   ├── media.type.scanned_image.yml # Scanned Image media type
+│   │   ├── taxonomy.vocabulary.*.yml   # 3 taxonomy vocabularies
+│   │   ├── field.storage.*.yml         # 10 field storage definitions
+│   │   └── field.field.*.yml           # 13 field instance configs
+│   └── schema/
+│       └── beta_tender.schema.yml      # Configuration schema
+│
+├── src/
+│   ├── Service/
+│   │   ├── OcrService.php              # OCR backend adapter (183 lines)
+│   │   ├── TenderCreationService.php   # Tender creation logic (302 lines)
+│   │   └── TenderBatchService.php      # Batch processing (172 lines)
+│   │
+│   ├── Controller/
+│   │   ├── DashboardController.php     # Dashboard views (282 lines)
+│   │   ├── ProofreadController.php     # Proofreading UI (182 lines)
+│   │   └── ShareController.php         # Share interface (94 lines)
+│   │
+│   └── Form/
+│       ├── BetaTenderSettingsForm.php  # Settings form (85 lines)
+│       ├── ImageArrangementForm.php    # Tabledrag form (241 lines)
+│       └── ProcessTenderBatchForm.php  # Batch form (82 lines)
+│
+├── templates/
+│   ├── tender-dashboard.html.twig           # Main dashboard template
+│   ├── tender-image-arrangement.html.twig   # Image arrangement template
+│   └── tender-proofread-dashboard.html.twig # Proofreading template
+│
+├── css/
+│   ├── dashboard.css                   # Dashboard styles
+│   ├── image-arrangement.css           # Tabledrag styles
+│   └── proofread.css                   # Proofreading styles
+│
+├── js/
+│   ├── dashboard.js                    # Dashboard behavior
+│   ├── image-arrangement.js            # Tabledrag enhancements
+│   └── proofread.js                    # Proofreading behavior
+│
+└── tests/
+    └── src/
+        ├── Kernel/
+        │   └── OcrServiceTest.php      # Service tests
+        └── Functional/
+            └── DashboardTest.php       # UI tests
+
+Key Components Summary:
+======================
+
+Services (3):
+- OcrService: OCR backend adapter
+- TenderCreationService: Creates tenders from images
+- TenderBatchService: Batch processing orchestration
+
+Controllers (3):
+- DashboardController: Multi-level dashboard
+- ProofreadController: Editorial workflow
+- ShareController: Content synchronization
+
+Forms (3):
+- BetaTenderSettingsForm: Module configuration
+- ImageArrangementForm: Image grouping with tabledrag
+- ProcessTenderBatchForm: Batch trigger
+
+Content Types (2):
+- Tender: Main content type with 10 fields
+- Scanned Image: Media type with 3 fields
+
+Taxonomies (3):
+- Tender Categories: Classification
+- Regions: Geographic
+- Tender Sources: Publication sources
+
+Routes (6):
+1. /admin/config/beta_tender - Settings
+2. /admin/content/tender/dashboard - Main dashboard
+3. /admin/content/tender/dashboard/{date}/{source_id} - Image arrangement
+4. /admin/content/tender/proofread - Proofreading dashboard
+5. /admin/content/tender/proofread/assign-next - Auto-assignment
+6. /admin/content/tender/share - Share interface
+
+Permissions (6):
+- administer beta tender
+- access tender dashboard
+- process tender images
+- proofread tenders
+- assign tenders
+- share tenders
+
+Documentation (5 files):
+- README.md: User guide
+- INSTALL.md: Installation guide
+- MODULE_SUMMARY.md: Technical documentation
+- CHANGELOG.md: Version history
+- LICENSE.txt: License information
+
+Total Statistics:
+================
+- PHP Files: 11
+- Configuration Files: 41
+- Template Files: 3
+- JavaScript Files: 3
+- CSS Files: 3
+- Test Files: 2
+- Documentation Files: 5
+- Total Files: 68
+- PHP Lines of Code: ~1,732
+- Total Lines (all files): ~3,500+
+

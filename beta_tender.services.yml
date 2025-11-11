@@ -1,0 +1,12 @@
+services:
+  beta_tender.ocr_service:
+    class: Drupal\beta_tender\Service\OcrService
+    arguments: ['@config.factory', '@logger.factory']
+
+  beta_tender.tender_creation:
+    class: Drupal\beta_tender\Service\TenderCreationService
+    arguments: ['@entity_type.manager', '@beta_tender.ocr_service', '@logger.factory', '@datetime.time']
+
+  beta_tender.batch_service:
+    class: Drupal\beta_tender\Service\TenderBatchService
+    arguments: ['@beta_tender.tender_creation', '@entity_type.manager', '@logger.factory']

@@ -1,0 +1,68 @@
+/**
+ * @file
+ * Styles for the image arrangement page.
+ */
+
+.tender-image-arrangement {
+  padding: 1rem;
+}
+
+.created-tenders-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.created-tenders-section h3 {
+  margin-top: 0;
+}
+
+.tender-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tender-list li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.tender-list li:last-child {
+  border-bottom: none;
+}
+
+.unprocessed-images-section {
+  margin-top: 2rem;
+}
+
+#image-arrangement-table {
+  width: 100%;
+}
+
+#image-arrangement-table td {
+  padding: 0.5rem;
+  vertical-align: middle;
+}
+
+#image-arrangement-table tr.draggable {
+  cursor: move;
+}
+
+#image-arrangement-table tr.drag {
+  background: #ffc;
+}
+
+#image-arrangement-table tr.drag-previous {
+  background: #ffe;
+}
+
+.tabledrag-handle {
+  cursor: move;
+}
+
+/* Indentation for child items */
+.tabledrag-indentation {
+  width: 20px;
+  display: inline-block;
+}

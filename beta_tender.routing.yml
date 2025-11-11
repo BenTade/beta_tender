@@ -1,0 +1,60 @@
+beta_tender.settings:
+  path: '/admin/config/beta_tender'
+  defaults:
+    _form: '\Drupal\beta_tender\Form\BetaTenderSettingsForm'
+    _title: 'Beta Tender Settings'
+  requirements:
+    _permission: 'administer beta tender'
+
+beta_tender.dashboard:
+  path: '/admin/content/tender/dashboard'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\DashboardController::mainDashboard'
+    _title: 'Image Processing Dashboard'
+  requirements:
+    _permission: 'access tender dashboard'
+
+beta_tender.image_arrangement:
+  path: '/admin/content/tender/dashboard/{date}/{source_id}'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\DashboardController::imageArrangement'
+    _title: 'Image Arrangement'
+  requirements:
+    _permission: 'process tender images'
+  options:
+    parameters:
+      source_id:
+        type: entity:taxonomy_term
+
+beta_tender.proofread:
+  path: '/admin/content/tender/proofread'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\ProofreadController::proofreadDashboard'
+    _title: 'Proofread Tenders'
+  requirements:
+    _permission: 'proofread tenders'
+
+beta_tender.assign_tender:
+  path: '/admin/content/tender/proofread/assign-next'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\ProofreadController::assignNextTender'
+  requirements:
+    _permission: 'assign tenders'
+    _csrf_token: 'TRUE'
+  methods: [POST]
+
+beta_tender.process_batch:
+  path: '/admin/content/tender/process-batch'
+  defaults:
+    _form: '\Drupal\beta_tender\Form\ProcessTenderBatchForm'
+    _title: 'Process Tender Batch'
+  requirements:
+    _permission: 'process tender images'
+
+beta_tender.share:
+  path: '/admin/content/tender/share'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\ShareController::shareDashboard'
+    _title: 'Share Tenders'
+  requirements:
+    _permission: 'share tenders'
