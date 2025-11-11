@@ -36,7 +36,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.3'
           extensions: gd, pdo_mysql, mbstring, xml, zip
           tools: composer:v2
 
@@ -234,7 +234,7 @@ jobs:
                 'status' => 1,
                 'field_ocr_text' => "This is sample OCR text for tender {$i}. The tender is for construction services.",
                 'field_opening_date' => date('Y-m-d', strtotime("+{$i} days")),
-                'field_closing_date' => date('Y-m-d', strtotime("+30 days")),
+                'field_closing_date' => date('Y-m-d', strtotime('+30 days')),
               ]);
               
               if ($source_term) {
@@ -547,8 +547,8 @@ jobs:
             ls -1 screenshots/ | sort | while read file; do
               # Extract step number and name from filename
               step=$(echo "$file" | sed 's/-.*//')
-              name=$(echo "$file" | sed 's/^[0-9]*-//' | sed 's/\.png$//' | sed 's/-/ /g')
-              echo "- **Step $step**: \`$file\` - ${name^}" >> reports/feature-demonstration-report.md
+              name=$(echo "$file" | sed 's/^[0-9]*-//' | sed 's/\.png$//')
+              echo "- **Step $step**: \\$file - ${name^}" >> reports/feature-demonstration-report.md
             done
             
             echo "" >> reports/feature-demonstration-report.md
@@ -575,7 +575,7 @@ jobs:
           ## 📊 Test Environment
           
           - **Drupal Version**: 11.x
-          - **PHP Version**: 8.1
+          - **PHP Version**: 8.3
           - **Database**: MySQL 8.0
           - **Browser**: Chromium (Playwright)
           - **Resolution**: 1920x1080
