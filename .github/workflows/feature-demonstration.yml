@@ -43,7 +43,8 @@ jobs:
 
       - name: Install Drupal
         run: |
-          composer create-project drupal/recommended-project:^11.0 drupal --no-interaction
+          # Pin to Drupal 11.1.0 to avoid core-recipe-unpack parse error in 11.2.x
+          composer create-project drupal/recommended-project:11.1.0 drupal --no-interaction
           cd drupal
           composer require drush/drush
           
