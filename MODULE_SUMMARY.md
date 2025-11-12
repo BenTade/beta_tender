@@ -25,7 +25,7 @@ The Beta Tender module is a comprehensive Drupal 11 solution for managing tender
 
 ### Technology Stack
 
-- **Backend**: PHP 8.1+, Drupal 11 Core APIs
+- **Backend**: PHP 8.3+, Drupal 11 Core APIs
 - **Frontend**: Twig templates, jQuery, Drupal.tabledrag
 - **Storage**: Drupal entity system (nodes, media, taxonomy)
 - **Processing**: Drupal Batch API for long-running tasks

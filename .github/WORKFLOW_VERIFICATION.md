@@ -47,7 +47,7 @@ Both workflows are configured to trigger on:
 
 When triggered, the workflows should:
 1. ✅ Checkout code successfully
-2. ✅ Set up PHP 8.1 environment
+2. ✅ Set up PHP 8.3 environment
 3. ✅ Install dependencies
 4. ✅ Run all validation checks
 5. ✅ Generate artifacts (screenshots, reports)
