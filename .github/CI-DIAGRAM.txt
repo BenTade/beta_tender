@@ -190,7 +190,7 @@
     │                                                            │
     │  ✅ Drupal Module Tests [passing]                          │
     │  ✅ Quick Checks [passing]                                 │
-    │  📦 PHP 8.1+                                               │
+    │  📦 PHP 8.3+                                               │
     │  🔷 Drupal 11.x                                            │
     │  📄 License: GPL-2.0-or-later                              │
     │                                                            │

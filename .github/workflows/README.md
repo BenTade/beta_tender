@@ -12,7 +12,7 @@ This directory contains automated testing workflows for the Beta Tender Drupal m
 
 1. **PHP Syntax Check** ✓
    - Validates PHP syntax for all `.php` files
-   - Ensures code can be parsed by PHP 8.1
+   - Ensures code can be parsed by PHP 8.3
 
 2. **Drupal Coding Standards** 📋
    - Runs PHPCS with Drupal and DrupalPractice standards

@@ -16,7 +16,7 @@
     "source": "https://github.com/BenTade/beta_tender"
   },
   "require": {
-    "php": ">=8.1",
+    "php": ">=8.3",
     "drupal/core": "^11"
   },
   "require-dev": {

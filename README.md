@@ -2,7 +2,7 @@
 
 [![Drupal Module Tests](https://github.com/BenTade/beta_tender/workflows/Drupal%20Module%20Tests/badge.svg)](https://github.com/BenTade/beta_tender/actions/workflows/drupal-module-tests.yml)
 [![Quick Checks](https://github.com/BenTade/beta_tender/workflows/Quick%20Checks/badge.svg)](https://github.com/BenTade/beta_tender/actions/workflows/quick-checks.yml)
-[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://www.php.net/)
+[![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-blue.svg)](https://www.php.net/)
 [![Drupal](https://img.shields.io/badge/Drupal-11.x-blue.svg)](https://www.drupal.org/)
 [![License](https://img.shields.io/badge/License-GPL--2.0--or--later-green.svg)](LICENSE.txt)
 
@@ -20,7 +20,7 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 ## Requirements
 
 - Drupal ^11
-- PHP 8.1 or higher
+- PHP 8.3 or higher
 - One of the following OCR modules:
   - document_ocr
   - ocr_image

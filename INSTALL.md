@@ -8,7 +8,7 @@ Before installing the Beta Tender module, ensure your environment meets these re
 
 ### System Requirements
 - **Drupal**: Version 11.x
-- **PHP**: 8.1 or higher
+- **PHP**: 8.3 or higher
 - **Database**: MySQL 5.7.8+, MariaDB 10.3.7+, PostgreSQL 10+, or SQLite 3.26+
 - **Web Server**: Apache 2.4+ or Nginx 1.16+
 
