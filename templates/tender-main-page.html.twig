@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Template for the unified Tenders main page showing datelines.
+ *
+ * Available variables:
+ * - datelines: Array of dateline objects grouped by source.
+ * - upload_form: The file upload form.
+ */
+#}
+<div class="tender-main-page">
+  <h2>{{ 'Tenders'|t }}</h2>
+  
+  {% if upload_form %}
+    <div class="tender-upload-section">
+      <h3>{{ 'Upload Files'|t }}</h3>
+      {{ upload_form }}
+    </div>
+  {% endif %}
+  
+  {% if datelines is empty %}
+    <p>{{ 'No tenders have been created yet.'|t }}</p>
+  {% else %}
+    <div class="tender-datelines">
+      <h3>{{ 'Datelines'|t }}</h3>
+      <table class="datelines-table">
+        <thead>
+          <tr>
+            <th>{{ 'Source'|t }}</th>
+            <th>{{ 'Date'|t }}</th>
+            <th>{{ 'Tender Count'|t }}</th>
+            <th>{{ 'Actions'|t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dateline in datelines %}
+            <tr>
+              <td>{{ dateline.source_name }}</td>
+              <td>{{ dateline.formatted_date }} <span class="date-code">({{ dateline.date }})</span></td>
+              <td>{{ dateline.tender_count }}</td>
+              <td>
+                <a href="{{ dateline.url }}" class="button button--small">{{ 'View Tenders'|t }}</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>

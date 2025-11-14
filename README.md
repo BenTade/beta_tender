@@ -10,10 +10,12 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 
 ## Features
 
-- **Multi-level Image Processing Dashboard**: Organize scanned images by date and source
+- **Unified Tenders Dashboard**: Consolidated view of all tenders organized by dateline (source + date)
+- **Upload with Dateline**: Upload scanned images with source and date information
 - **OCR Integration**: Extract text from images using configurable OCR backends (document_ocr or ocr_image)
 - **Drag-and-Drop Image Arrangement**: Group multiple images into single tenders using Drupal's tabledrag
 - **Batch Processing**: Process multiple tender groups with OCR using Drupal's Batch API
+- **Comprehensive Tender Tracking**: View author, creation date, last update, proofread status, and share status
 - **Proofreading Workflow**: Assign tenders to editors for review with status tracking
 - **Content Synchronization**: Integration with Entity Share for pushing content to production
 
@@ -55,49 +57,59 @@ Assign the following permissions to appropriate roles:
 
 ## Usage
 
+### Unified Tenders Dashboard
+
+1. **Access the Tenders Page**:
+   - Navigate to **Content > Tender** tab
+   - View a unified dashboard showing all tenders organized by dateline (source + date)
+
+2. **Upload Scanned Images**:
+   - Use the upload form at the top of the page
+   - Select the source (newspaper or publication)
+   - Enter the publication date (dateline)
+   - Upload one or more scanned image files
+   - Images are automatically grouped by the specified dateline
+
+3. **Browse Datelines**:
+   - View a table of all datelines with tender counts
+   - See the source name, publication date, and number of tenders
+   - Datelines are sorted by publication date (newest first), then by source name
+
+4. **View Dateline Details**:
+   - Click "View Tenders" to see all tenders for a specific dateline
+   - View comprehensive information for each tender:
+     - Title and link to full tender
+     - Author who created the tender
+     - Created date and time
+     - Last updated date and time
+     - Proofread status (Needs Review, In Review, Reviewed)
+     - Assigned proofreader
+     - Share/sync status
+
 ### Image Processing Workflow
 
-1. **Upload Scanned Images**:
-   - Create "Scanned Image" media entities with the source field populated
-   - Images are automatically grouped by upload date
-
-2. **Access the Dashboard**:
-   - Navigate to **Content > Tender** tab
-   - View images organized by date and source
-
-3. **Arrange Images**:
-   - Click on a source to access the image arrangement page
+1. **Arrange Images**:
+   - Access the image arrangement page for unprocessed images
    - Use drag-and-drop to group related images
    - Indent images under a parent to create multi-image tenders
 
-4. **Process with OCR**:
+2. **Process with OCR**:
    - Select parent images (tender groups) using checkboxes
    - Click "Process OCR and Create Tenders"
    - The batch process will extract text and create tender nodes
 
 ### Proofreading Workflow
 
-1. Navigate to **Content > Tender > Proofread Tenders**
-2. View tenders filtered by status:
-   - **Needs Review**: Newly created tenders awaiting assignment
-   - **In Review**: Tenders currently being proofread
-   - **Reviewed**: Completed tenders ready for publication
-
-3. Click "Assign Next Tender" to:
-   - Automatically assign the oldest unreviewed tender to yourself
-   - Change status to "In Review"
-   - Redirect to the tender edit page
-
-4. Review and edit the tender:
+1. **Review Tenders**:
+   - From the dateline detail view, click "Edit" on any tender
    - Verify OCR accuracy
    - Correct any errors in extracted fields
-   - Update status to "Reviewed" when complete
+   - Update proofread status when complete
 
-### Content Synchronization
-
-1. Navigate to **Content > Tender > Share Tenders**
-2. Use Entity Share interface to select and push reviewed tenders to production
-3. Monitor synchronization status from the proofreading dashboard
+2. **Track Progress**:
+   - View proofread status in the dateline detail view
+   - See who is assigned to proofread each tender
+   - Monitor share/sync status for published tenders
 
 ## Content Types and Fields
 

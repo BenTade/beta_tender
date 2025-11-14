@@ -58,3 +58,19 @@ beta_tender.share:
     _title: 'Share Tenders'
   requirements:
     _permission: 'share tenders'
+
+beta_tender.tenders:
+  path: '/admin/content/tender'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\TendersController::mainPage'
+    _title: 'Tenders'
+  requirements:
+    _permission: 'access tender dashboard'
+
+beta_tender.dateline_detail:
+  path: '/admin/content/tender/dateline/{source_id}/{date}'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\TendersController::datelineDetail'
+    _title: 'Dateline Detail'
+  requirements:
+    _permission: 'access tender dashboard'

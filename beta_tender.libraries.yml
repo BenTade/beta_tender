@@ -31,3 +31,12 @@ proofread:
   dependencies:
     - core/jquery
     - core/drupal
+
+tenders:
+  version: 1.x
+  css:
+    theme:
+      css/tenders.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
