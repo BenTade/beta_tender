@@ -41,10 +41,10 @@ jobs:
           extensions: gd, pdo_mysql, mbstring, xml, zip
           tools: composer:v2
 
-      - name: Install Drupal
+      - name: Create Drupal project (use secure release)
         run: |
-          # Pin to Drupal 11.1.0 to avoid core-recipe-unpack parse error in 11.2.x
-          composer create-project drupal/recommended-project:11.1.0 drupal --no-interaction
+          # Allow Composer to choose a secure 11.x release (avoid pinned vulnerable patch)
+          composer create-project drupal/recommended-project:^11.2 drupal --no-interaction --no-progress
           cd drupal
           composer require drush/drush
           
