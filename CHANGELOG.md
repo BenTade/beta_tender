@@ -42,6 +42,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Unified Tenders dashboard consolidating three separate pages into one
+- Upload form with dateline (source + date) input
+- Dateline detail view showing comprehensive tender information:
+  - Author information
+  - Created and last updated timestamps
+  - Proofread status with assigned editor
+  - Share/sync status
+- New TendersController with mainPage() and datelineDetail() methods
+- New templates: tender-main-page.html.twig and tender-dateline-detail.html.twig
+- New UploadScannedImagesForm with dateline input fields
+- Sorting by publication date, then by creation date
+- Test coverage for unified tenders page
+
+### Changed
+- Menu structure now shows single "Tender" tab instead of multiple sub-tabs
+- Main tenders page now at /admin/content/tender
+- Updated documentation to reflect consolidated interface
+
 ### Planned
 - Enhanced OCR text parsing with NLP
 - Advanced image preprocessing options
