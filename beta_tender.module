@@ -60,6 +60,20 @@ function beta_tender_theme() {
         'tenders' => [],
       ],
     ],
+    'tender_main_page' => [
+      'variables' => [
+        'datelines' => [],
+        'upload_form' => NULL,
+      ],
+    ],
+    'tender_dateline_detail' => [
+      'variables' => [
+        'source_name' => NULL,
+        'date' => NULL,
+        'formatted_date' => NULL,
+        'tenders' => [],
+      ],
+    ],
   ];
 }
 

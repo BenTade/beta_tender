@@ -1,0 +1,296 @@
+<?php
+
+namespace Drupal\beta_tender\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Controller for the unified Tenders page.
+ */
+class TendersController extends ControllerBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a TendersController object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The date formatter service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    DateFormatterInterface $date_formatter,
+    AccountInterface $current_user
+  ) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->dateFormatter = $date_formatter;
+    $this->currentUser = $current_user;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('date.formatter'),
+      $container->get('current_user')
+    );
+  }
+
+  /**
+   * Main Tenders page showing datelines grouped by source.
+   *
+   * @return array
+   *   Render array for the tenders page.
+   */
+  public function mainPage(): array {
+    $build = [
+      '#theme' => 'tender_main_page',
+      '#attached' => [
+        'library' => ['beta_tender/tenders'],
+      ],
+    ];
+
+    // Add upload form at the top.
+    $build['upload_form'] = $this->formBuilder()->getForm('Drupal\beta_tender\Form\ProcessTenderBatchForm');
+
+    // Query all tenders.
+    $node_storage = $this->entityTypeManager->getStorage('node');
+    $query = $node_storage->getQuery()
+      ->condition('type', 'tender')
+      ->accessCheck(TRUE)
+      ->sort('field_publish_date', 'DESC')
+      ->sort('created', 'DESC');
+    
+    $tender_ids = $query->execute();
+    
+    if (empty($tender_ids)) {
+      $build['#empty'] = [
+        '#markup' => '<p>' . $this->t('No tenders have been created yet.') . '</p>',
+      ];
+      return $build;
+    }
+
+    $tenders = $node_storage->loadMultiple($tender_ids);
+    
+    // Group by dateline (source + publish date).
+    $datelines = [];
+    
+    foreach ($tenders as $tender) {
+      $source_id = NULL;
+      $source_name = $this->t('Unknown Source');
+      
+      if ($tender->hasField('field_tender_source') && !$tender->get('field_tender_source')->isEmpty()) {
+        $source = $tender->get('field_tender_source')->entity;
+        if ($source) {
+          $source_id = $source->id();
+          $source_name = $source->getName();
+        }
+      }
+      
+      // Get publish date (newspaper date).
+      $publish_date = NULL;
+      $date_key = 'unknown';
+      if ($tender->hasField('field_publish_date') && !$tender->get('field_publish_date')->isEmpty()) {
+        $publish_date = $tender->get('field_publish_date')->value;
+        if ($publish_date) {
+          $date_key = date('Y-m-d', strtotime($publish_date));
+        }
+      }
+      
+      // If no publish date, use created date.
+      if ($date_key === 'unknown') {
+        $date_key = date('Y-m-d', $tender->getCreatedTime());
+      }
+      
+      // Create dateline key: source_date.
+      $dateline_key = $source_id . '_' . $date_key;
+      
+      if (!isset($datelines[$dateline_key])) {
+        $datelines[$dateline_key] = [
+          'source_id' => $source_id,
+          'source_name' => $source_name,
+          'date' => $date_key,
+          'publish_date' => $publish_date,
+          'tenders' => [],
+        ];
+      }
+      
+      $datelines[$dateline_key]['tenders'][] = $tender->id();
+    }
+
+    // Sort datelines by date (descending), then by source name.
+    usort($datelines, function ($a, $b) {
+      // First sort by date (newest first).
+      $date_cmp = strcmp($b['date'], $a['date']);
+      if ($date_cmp !== 0) {
+        return $date_cmp;
+      }
+      // Then sort by source name.
+      return strcmp($a['source_name'], $b['source_name']);
+    });
+
+    // Prepare dateline data for template.
+    $dateline_data = [];
+    foreach ($datelines as $dateline) {
+      $dateline_data[] = [
+        'source_id' => $dateline['source_id'],
+        'source_name' => $dateline['source_name'],
+        'date' => $dateline['date'],
+        'formatted_date' => $this->dateFormatter->format(strtotime($dateline['date']), 'custom', 'F j, Y'),
+        'tender_count' => count($dateline['tenders']),
+        'url' => "/admin/content/tender/dateline/{$dateline['source_id']}/{$dateline['date']}",
+      ];
+    }
+
+    $build['#datelines'] = $dateline_data;
+
+    return $build;
+  }
+
+  /**
+   * Dateline detail page showing all tenders for a source and date.
+   *
+   * @param string $source_id
+   *   The source taxonomy term ID.
+   * @param string $date
+   *   The date in Y-m-d format.
+   *
+   * @return array
+   *   Render array for the dateline detail page.
+   */
+  public function datelineDetail(string $source_id, string $date): array {
+    // Load source term.
+    $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
+    $source = $term_storage->load($source_id);
+    
+    $source_name = $source ? $source->getName() : $this->t('Unknown Source');
+    
+    $build = [
+      '#theme' => 'tender_dateline_detail',
+      '#source_name' => $source_name,
+      '#date' => $date,
+      '#formatted_date' => $this->dateFormatter->format(strtotime($date), 'custom', 'F j, Y'),
+      '#attached' => [
+        'library' => ['beta_tender/tenders'],
+      ],
+    ];
+
+    // Query tenders for this dateline.
+    $node_storage = $this->entityTypeManager->getStorage('node');
+    $query = $node_storage->getQuery()
+      ->condition('type', 'tender')
+      ->condition('field_tender_source', $source_id)
+      ->accessCheck(TRUE)
+      ->sort('created', 'DESC');
+    
+    $tender_ids = $query->execute();
+    
+    if (empty($tender_ids)) {
+      $build['#empty'] = [
+        '#markup' => '<p>' . $this->t('No tenders found for this dateline.') . '</p>',
+      ];
+      return $build;
+    }
+
+    $tenders = $node_storage->loadMultiple($tender_ids);
+    
+    // Filter tenders by date and prepare data.
+    $tender_list = [];
+    foreach ($tenders as $tender) {
+      // Check if tender matches the date.
+      $tender_date = NULL;
+      if ($tender->hasField('field_publish_date') && !$tender->get('field_publish_date')->isEmpty()) {
+        $publish_date = $tender->get('field_publish_date')->value;
+        if ($publish_date) {
+          $tender_date = date('Y-m-d', strtotime($publish_date));
+        }
+      }
+      
+      // If no publish date, use created date.
+      if (!$tender_date) {
+        $tender_date = date('Y-m-d', $tender->getCreatedTime());
+      }
+      
+      if ($tender_date !== $date) {
+        continue;
+      }
+      
+      // Get author.
+      $author_name = $this->t('Unknown');
+      if ($tender->getOwner()) {
+        $author_name = $tender->getOwner()->getDisplayName();
+      }
+      
+      // Get assigned editor (proofreader).
+      $editor_name = $this->t('Unassigned');
+      if ($tender->hasField('field_assigned_editor') && !$tender->get('field_assigned_editor')->isEmpty()) {
+        $editor = $tender->get('field_assigned_editor')->entity;
+        if ($editor) {
+          $editor_name = $editor->getDisplayName();
+        }
+      }
+      
+      // Get proofread status.
+      $proofread_status = $this->t('Needs Review');
+      if ($tender->hasField('field_proofreading_status') && !$tender->get('field_proofreading_status')->isEmpty()) {
+        $status_value = $tender->get('field_proofreading_status')->value;
+        $status_labels = [
+          'needs_review' => $this->t('Needs Review'),
+          'in_review' => $this->t('In Review'),
+          'reviewed' => $this->t('Reviewed'),
+        ];
+        $proofread_status = $status_labels[$status_value] ?? $this->t('Unknown');
+      }
+      
+      // Get share/sync status (placeholder for now - Entity Share integration).
+      $share_status = $this->t('Not Synced');
+      
+      $tender_list[] = [
+        'id' => $tender->id(),
+        'title' => $tender->label(),
+        'url' => $tender->toUrl()->toString(),
+        'edit_url' => $tender->toUrl('edit-form')->toString(),
+        'author' => $author_name,
+        'created' => $this->dateFormatter->format($tender->getCreatedTime(), 'short'),
+        'changed' => $this->dateFormatter->format($tender->getChangedTime(), 'short'),
+        'proofread_status' => $proofread_status,
+        'editor' => $editor_name,
+        'share_status' => $share_status,
+      ];
+    }
+
+    $build['#tenders'] = $tender_list;
+
+    return $build;
+  }
+
+}
