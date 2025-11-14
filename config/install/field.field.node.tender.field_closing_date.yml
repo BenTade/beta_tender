@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.field_closing_date
     - node.type.tender
   module:
+    - beta_tender
     - datetime
 id: node.tender.field_closing_date
 field_name: field_closing_date

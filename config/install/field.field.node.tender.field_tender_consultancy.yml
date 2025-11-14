@@ -2,15 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.media.field_media_source
-    - media.type.scanned_image
-    - taxonomy.vocabulary.tender_sources
-id: media.scanned_image.field_media_source
-field_name: field_media_source
-entity_type: media
-bundle: scanned_image
-label: 'Source'
-description: 'The source publication of this scanned image'
+    - field.storage.node.field_tender_consultancy
+    - node.type.tender
+    - taxonomy.vocabulary.tender_consultancy
+  module:
+    - beta_tender
+id: node.tender.field_tender_consultancy
+field_name: field_tender_consultancy
+entity_type: node
+bundle: tender
+label: 'Consultancy'
+description: ''
 required: false
 translatable: false
 default_value: {  }
@@ -19,7 +21,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      tender_sources: tender_sources
+      tender_consultancy: tender_consultancy
     sort:
       field: name
       direction: asc

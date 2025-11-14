@@ -4,6 +4,7 @@ dependencies:
   module:
     - node
     - options
+    - beta_tender
 id: node.field_proofreading_status
 field_name: field_proofreading_status
 entity_type: node

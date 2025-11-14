@@ -5,6 +5,7 @@ dependencies:
     - file
     - image
     - node
+    - beta_tender
 id: node.field_scanned_images
 field_name: field_scanned_images
 entity_type: node

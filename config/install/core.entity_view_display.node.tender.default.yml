@@ -1,0 +1,102 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.tender.field_tender_categories
+    - field.field.node.tender.field_region
+    - field.field.node.tender.field_tender_source
+    - field.field.node.tender.field_tender_consultancy
+    - field.field.node.tender.field_tender_contractor
+    - field.field.node.tender.field_closing_date
+    - field.field.node.tender.field_opening_date
+    - field.field.node.tender.field_publish_date
+    - field.field.node.tender.field_scanned_images
+    - field.field.node.tender.field_ocr_text
+    - field.field.node.tender.field_proofreading_status
+    - field.field.node.tender.field_assigned_editor
+  module:
+    - beta_tender
+id: node.tender.default
+targetEntityType: node
+bundle: tender
+mode: default
+content:
+  field_tender_categories:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 0
+  field_region:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 1
+  field_tender_source:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 2
+  field_tender_consultancy:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 3
+  field_tender_contractor:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 4
+  field_opening_date:
+    type: datetime_default
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 5
+  field_closing_date:
+    type: datetime_default
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 6
+  field_publish_date:
+    type: datetime_default
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 7
+  body:
+    type: text_default
+    label: hidden
+    settings: { }
+    third_party_settings: { }
+    weight: 8
+  field_scanned_images:
+    type: image
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 9
+  field_ocr_text:
+    type: text_default
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 10
+  field_proofreading_status:
+    type: list_default
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 11
+  field_assigned_editor:
+    type: entity_reference_label
+    label: above
+    settings: { }
+    third_party_settings: { }
+    weight: 12
+hidden: {  }

@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.field_proofreading_status
     - node.type.tender
   module:
+    - beta_tender
     - options
 id: node.tender.field_proofreading_status
 field_name: field_proofreading_status

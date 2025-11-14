@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the Beta Tender module.
  */
 
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\taxonomy\Entity\Term;
+
 /**
  * Implements hook_install().
  */
@@ -30,10 +33,60 @@ function beta_tender_install() {
  * Implements hook_uninstall().
  */
 function beta_tender_uninstall() {
-  // Clean up configuration.
+  // Delete Beta Tender settings config.
   \Drupal::configFactory()->getEditable('beta_tender.settings')->delete();
-  
-  \Drupal::messenger()->addStatus(t('Beta Tender module has been uninstalled.'));
+
+  // Proactively remove the Tender bundle, its fields, and displays.
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  // 1) Remove field instances attached to node.tender.
+  try {
+    $field_config_storage = $entity_type_manager->getStorage('field_config');
+    $field_configs = $field_config_storage->loadByProperties([
+      'entity_type' => 'node',
+      'bundle' => 'tender',
+    ]);
+    foreach ($field_configs as $field_config) {
+      $field_config->delete();
+    }
+  }
+  catch (\Exception $e) {
+    // Best-effort cleanup. Continue.
+  }
+
+  // 2) Remove entity form and view displays for node.tender.
+  foreach ([
+    ['storage' => 'entity_form_display', 'id' => 'node.tender.default'],
+    ['storage' => 'entity_view_display', 'id' => 'node.tender.default'],
+  ] as $info) {
+    try {
+      $storage = $entity_type_manager->getStorage($info['storage']);
+      if ($display = $storage->load($info['id'])) {
+        $display->delete();
+      }
+    }
+    catch (\Exception $e) {}
+  }
+
+  // 3) Remove the Tender content type itself.
+  try {
+    if ($type = $entity_type_manager->getStorage('node_type')->load('tender')) {
+      $type->delete();
+    }
+  }
+  catch (\Exception $e) {
+    // Ignore if already removed.
+  }
+
+  // 4) Remove vocabularies.
+  try {
+    _delete_vocabularies();
+  }
+  catch (\Exception $e) {
+    // Ignore if already removed.
+  }
+
+  \Drupal::messenger()->addStatus(t('Beta Tender module has been uninstalled and the Tender content type configuration has been removed.'));
 }
 
 /**
@@ -85,4 +138,593 @@ function beta_tender_requirements($phase) {
   }
   
   return $requirements;
+}
+
+/**
+ * Populate vocabularies and default terms for existing sites.
+ */
+function beta_tender_update_9001(&$sandbox) {
+  beta_tender_populate_vocabularies();
+  return t('Beta Tender: vocabularies and default terms ensured.');
+}
+
+/**
+ * Ensure required vocabularies exist and populate default terms.
+ *
+ * This aligns with the module's config/install vocabulary IDs:
+ * - regions
+ * - tender_categories
+ * - tender_sources
+ * - tender_contractor
+ * - tender_consultancy
+ */
+function beta_tender_populate_vocabularies(): void {
+  $vocabularies = [
+    'regions' => [
+      'name' => 'Regions',
+      'description' => 'Geographical regions for tender classification',
+    ],
+    'tender_categories' => [
+      'name' => 'Tender Categories',
+      'description' => 'Categories for tenders',
+    ],
+    'tender_contractor' => [
+      'name' => 'Tender Contractor',
+      'description' => 'Contractors for tenders',
+    ],
+    'tender_consultancy' => [
+      'name' => 'Tender Consultancy',
+      'description' => 'Consultancies for tenders',
+    ],
+    'tender_sources' => [
+      'name' => 'Tender Sources',
+      'description' => 'Sources for tenders',
+    ],
+  ];
+
+  foreach ($vocabularies as $vid => $info) {
+    if (!Vocabulary::load($vid)) {
+      Vocabulary::create([
+        'vid' => $vid,
+        'name' => $info['name'],
+        'description' => $info['description'],
+      ])->save();
+    }
+  }
+
+  // Regions.
+  $ethiopian_regions = [
+    'አዲስ አበባ (Addis Ababa)',
+    'አፋር (Afar)',
+    'አማራ (Amhara)',
+    'ቤኒሻንጉል ጉሙዝ (Benishangul-Gumuz)',
+    'ማዕከላዊ ኢትዮጵያ (Central Ethiopia)',
+    'ድሬዳዋ (Dire Dawa)',
+    'ጋምቤላ (Gambela)',
+    'ሐረሪ (Harari)',
+    'ኦሮሚያ (Oromia)',
+    'ሲዳማ (Sidama)',
+    'ሶማሌ (Somali)',
+    'ደቡብ ብሔሮች ብሔረሰቦችና ሕዝቦች (SNNPR)',
+    'ደቡብ ኢትዮጵያ (South Ethiopia)',
+    'ደቡባዊ ምዕራባዊ ኢትዮጵያ ሕዝቦች (SWEPR)',
+    'ትግራይ (Tigray)',
+  ];
+  foreach ($ethiopian_regions as $region) {
+    beta_tender_ensure_term('regions', $region);
+  }
+
+  // Newspapers.
+  $ethiopian_newspapers = [
+    'አዲስ ዘመን (Addis Zemen)',
+    'Ethiopian Herald',
+    'Capital',
+    'Fortune',
+    'The Reporter',
+    'ሪፖርተር (Reporter)',
+    'በኩር (Bekur)',
+    'አዲስ አድማስ (Addis Admas)',
+    'Daily Monitor',
+    'አዲስ ልሳን (Addis Lisan)',
+  ];
+  foreach ($ethiopian_newspapers as $paper) {
+    beta_tender_ensure_term('tender_sources', $paper);
+  }
+
+  // Categories.
+  $categories = [
+    ['name' => 'General Service Provision', 'parent' => null],
+    ['name' => 'Gifts and Crafts', 'parent' => null],
+    ['name' => 'Health', 'parent' => null],
+    ['name' => 'Health Related Services', 'parent' => 'Health'],
+    ['name' => 'Hygienic Products', 'parent' => 'Health'],
+    ['name' => 'Health Related Tools and Accessories', 'parent' => 'Health'],
+    ['name' => 'Houses and Buildings', 'parent' => null],
+    ['name' => 'House and Building Maintenance', 'parent' => 'Houses and Buildings'],
+    ['name' => 'House and Building Rent', 'parent' => 'Houses and Buildings'],
+    ['name' => 'House and Building Sales and Purchase', 'parent' => 'Houses and Buildings'],
+    ['name' => 'Home Appliances and Supplies', 'parent' => null],
+    ['name' => 'Furniture', 'parent' => null],
+    ['name' => 'Other Furniture', 'parent' => 'Furniture'],
+    ['name' => 'Office Furniture', 'parent' => 'Furniture'],
+    ['name' => 'House Furniture', 'parent' => 'Furniture'],
+    ['name' => 'Foreclosure', 'parent' => null],
+    ['name' => 'Banks', 'parent' => 'Foreclosure'],
+    ['name' => 'House and Building Foreclosure', 'parent' => 'Foreclosure'],
+    ['name' => 'Industry and Factory Foreclosure', 'parent' => 'Foreclosure'],
+    ['name' => 'Share Sales', 'parent' => 'Foreclosure'],
+    ['name' => 'Vehicle Foreclosure', 'parent' => 'Foreclosure'],
+    ['name' => 'Furnishings and Fixtures', 'parent' => null],
+    ['name' => 'House and Building Furnishings', 'parent' => 'Furnishings and Fixtures'],
+    ['name' => 'Carpets and Curtains', 'parent' => 'Furnishings and Fixtures'],
+    ['name' => 'House and Building Fixtures', 'parent' => 'Furnishings and Fixtures'],
+    ['name' => 'Beautification Service and Material', 'parent' => 'Furnishings and Fixtures'],
+    ['name' => 'Maintenance', 'parent' => null],
+    ['name' => 'Machinery Maintenance', 'parent' => 'Maintenance'],
+    ['name' => 'Other Maintenance', 'parent' => 'Maintenance'],
+    ['name' => 'House and Building Maintenance', 'parent' => 'Maintenance'],
+    ['name' => 'Furniture Maintenance', 'parent' => 'Maintenance'],
+    ['name' => 'Vehicle Maintenance', 'parent' => 'Maintenance'],
+    ['name' => 'Machinery', 'parent' => null],
+    ['name' => 'Land and Lease', 'parent' => null],
+    ['name' => 'Industrial Supplies and Related', 'parent' => null],
+    ['name' => 'Industrial Raw Materials', 'parent' => 'Industrial Supplies and Related'],
+    ['name' => 'Industrial Spare Parts', 'parent' => 'Industrial Supplies and Related'],
+    ['name' => 'Industrial Machinery', 'parent' => 'Industrial Supplies and Related'],
+    ['name' => 'Industrial Turnkey', 'parent' => 'Industrial Supplies and Related'],
+    ['name' => 'Insurance', 'parent' => null],
+    ['name' => 'Laboratory and Chemicals', 'parent' => null],
+    ['name' => 'Pesticides and Insecticides', 'parent' => 'Laboratory and Chemicals'],
+    ['name' => 'Laboratory Equipments', 'parent' => 'Laboratory and Chemicals'],
+    ['name' => 'Chemicals and Reagents', 'parent' => 'Laboratory and Chemicals'],
+    ['name' => 'Food and Beverage', 'parent' => null],
+    ['name' => 'Food Items Supply', 'parent' => 'Food and Beverage'],
+    ['name' => 'Cafe and Restaurant', 'parent' => 'Food and Beverage'],
+    ['name' => 'Computer and Accessories', 'parent' => null],
+    ['name' => 'Computer Sales', 'parent' => 'Computer and Accessories'],
+    ['name' => 'Computer Maintenance', 'parent' => 'Computer and Accessories'],
+    ['name' => 'Computer Accessories', 'parent' => 'Computer and Accessories'],
+    ['name' => 'Construction and Construction Machinery', 'parent' => null],
+    ['name' => 'Construction Machinery and Equipment', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Construction Raw Materials', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Construction Service and Maintenance', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'House and Building Construction', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Road and Bridge Construction', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Water Works Construction', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Construction Related', 'parent' => 'Construction and Construction Machinery'],
+    ['name' => 'Accounting and Auditing', 'parent' => null],
+    ['name' => 'Auditing Related', 'parent' => 'Accounting and Auditing'],
+    ['name' => 'Accounting Related', 'parent' => 'Accounting and Auditing'],
+    ['name' => 'Consultant', 'parent' => null],
+    ['name' => 'Financial Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'Academic Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'IT Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'Engineering Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'Legal Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'Organization Consultancy', 'parent' => 'Consultant'],
+    ['name' => 'Agriculture', 'parent' => null],
+    ['name' => 'Agricultural Machinery and Spare parts', 'parent' => 'Agriculture'],
+    ['name' => 'Agricultural Products and Services', 'parent' => 'Agriculture'],
+    ['name' => 'Agricultural Raw Material and Supplies', 'parent' => 'Agriculture'],
+    ['name' => 'Poultry, Bee and Animal Husbandry', 'parent' => 'Agriculture'],
+    ['name' => 'Flora and Horticulture', 'parent' => 'Agriculture'],
+    ['name' => 'Cleaning and Janitorial', 'parent' => null],
+    ['name' => 'Cleaning and Janitorial Service', 'parent' => 'Cleaning and Janitorial'],
+    ['name' => 'Cleaning and Janitorial Equipments', 'parent' => 'Cleaning and Janitorial'],
+    ['name' => 'Building Materials', 'parent' => null],
+    ['name' => 'Energy', 'parent' => null],
+    ['name' => 'Generators, Motors and Compressors', 'parent' => 'Energy'],
+    ['name' => 'Refrigeration and Cold Room', 'parent' => 'Energy'],
+    ['name' => 'Fuel and Related', 'parent' => 'Energy'],
+    ['name' => 'Dynamite and Explosives', 'parent' => 'Energy'],
+    ['name' => 'Solar and Photovoltaic', 'parent' => 'Energy'],
+    ['name' => 'Engineering Service and Equipment', 'parent' => null],
+    ['name' => 'Water Engineering Service', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Mechanical Engineering Service', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Other Engineering Service', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Engineering Equipment', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Electrical Engineering Service', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Civil Engineering Service', 'parent' => 'Engineering Service and Equipment'],
+    ['name' => 'Electrical and Electronic', 'parent' => null],
+    ['name' => 'Photo,Video and Audio-Visual Equipment', 'parent' => 'Electrical and Electronic'],
+    ['name' => 'Installation and Maintenance', 'parent' => 'Electrical and Electronic'],
+    ['name' => 'Electronic Equipment and Accessories', 'parent' => 'Electrical and Electronic'],
+    ['name' => 'Electro-Mechanical Products and Services', 'parent' => 'Electrical and Electronic'],
+    ['name' => 'Electrical Equipment and Accessories', 'parent' => 'Electrical and Electronic'],
+    ['name' => 'Education and Training', 'parent' => null],
+    ['name' => 'Books and Education Materials', 'parent' => 'Education and Training'],
+    ['name' => 'Education and Training Service', 'parent' => 'Education and Training'],
+    ['name' => 'Medical Equipment and Supplies', 'parent' => null],
+    ['name' => 'Medical/Laboratory Equipment Maintenance', 'parent' => 'Medical Equipment and Supplies'],
+    ['name' => 'Pharmaceutical Products/Medicines', 'parent' => 'Medical Equipment and Supplies'],
+    ['name' => 'Veterinary Drugs and Equipment', 'parent' => 'Medical Equipment and Supplies'],
+    ['name' => 'Minerals and Natural Resources', 'parent' => null],
+    ['name' => 'Office Supplies and Stationary', 'parent' => null],
+    ['name' => 'Office Items and Equipment', 'parent' => 'Office Supplies and Stationary'],
+    ['name' => 'Office Services', 'parent' => 'Office Supplies and Stationary'],
+    ['name' => 'Other Office Supplies', 'parent' => 'Office Supplies and Stationary'],
+    ['name' => 'Stationery Supplies', 'parent' => 'Office Supplies and Stationary'],
+    ['name' => 'Packaging, Wrapping and Papers', 'parent' => null],
+    ['name' => 'Photography and Filming', 'parent' => null],
+    ['name' => 'Photography and Filming Equipment / Accessories', 'parent' => 'Photography and Filming'],
+    ['name' => 'Photography and Filming Service', 'parent' => 'Photography and Filming'],
+    ['name' => 'Photography,Filming and Documentary', 'parent' => 'Photography and Filming'],
+    ['name' => 'Plastic, Pipes and Fittings', 'parent' => null],
+    ['name' => 'Fittings and Fixtures', 'parent' => 'Plastic, Pipes and Fittings'],
+    ['name' => 'Plastics and Plastic Products', 'parent' => 'Plastic, Pipes and Fittings'],
+    ['name' => 'Pipes and Tubes', 'parent' => 'Plastic, Pipes and Fittings'],
+    ['name' => 'Printing and Publishing', 'parent' => null],
+    ['name' => 'Printing and Publishing Equipment/Appliances', 'parent' => 'Printing and Publishing'],
+    ['name' => 'Printing and Publishing Materials', 'parent' => 'Printing and Publishing'],
+    ['name' => 'Printing and Publishing Service', 'parent' => 'Printing and Publishing'],
+    ['name' => 'Public Relations and Advertising', 'parent' => null],
+    ['name' => 'Billboards and Digital Advertising', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Event Organizing', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Graphic Designs and Printing', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Marketing and Promotion Services', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Paper Printed Advertising and Materials', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Promotional Items', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Public Relations and Public Address Systems', 'parent' => 'Public Relations and Advertising'],
+    ['name' => 'Purchase', 'parent' => null],
+    ['name' => 'Rent', 'parent' => null],
+    ['name' => 'House and Building Rent', 'parent' => 'Rent'],
+    ['name' => 'Machinery Rent', 'parent' => 'Rent'],
+    ['name' => 'Other Rent', 'parent' => 'Rent'],
+    ['name' => 'Vehicle Rent', 'parent' => 'Rent'],
+    ['name' => 'Sale', 'parent' => null],
+    ['name' => 'House and Building Sale', 'parent' => 'Sale'],
+    ['name' => 'Other Sale', 'parent' => 'Sale'],
+    ['name' => 'Vehicle and Machinery Sale', 'parent' => 'Sale'],
+    ['name' => 'Security and Protection', 'parent' => null],
+    ['name' => 'Safety Equipments and Materials', 'parent' => 'Security and Protection'],
+    ['name' => 'Security Infrastructure', 'parent' => 'Security and Protection'],
+    ['name' => 'Security Services', 'parent' => 'Security and Protection'],
+    ['name' => 'Software and Networking', 'parent' => null],
+    ['name' => 'Network Installation and Troubleshooting', 'parent' => 'Software and Networking'],
+    ['name' => 'Software', 'parent' => 'Software and Networking'],
+    ['name' => 'Training and Certification', 'parent' => 'Software and Networking'],
+    ['name' => 'Website and Software Development', 'parent' => 'Software and Networking'],
+    ['name' => 'Vehicle and Spare Part', 'parent' => null],
+    ['name' => 'Tyre and Related', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Sports, Camping and Leisure', 'parent' => null],
+    ['name' => 'Steels, Metals and Aluminums', 'parent' => null],
+    ['name' => 'Aluminium Related Products', 'parent' => 'Steels, Metals and Aluminums'],
+    ['name' => 'Steels, Irons and Metals', 'parent' => 'Steels, Metals and Aluminums'],
+    ['name' => 'Telecommunication Equipment', 'parent' => null],
+    ['name' => 'Textiles and Leather Products', 'parent' => null],
+    ['name' => 'Leather Products', 'parent' => 'Textiles and Leather Products'],
+    ['name' => 'Textiles,Fabrics and Wearing', 'parent' => 'Textiles and Leather Products'],
+    ['name' => 'Tour, Travel and Hotels', 'parent' => null],
+    ['name' => 'Hotels and Accommodations', 'parent' => 'Tour, Travel and Hotels'],
+    ['name' => 'Travel,Ticketing and Reservations', 'parent' => 'Tour, Travel and Hotels'],
+    ['name' => 'Transit and Transport', 'parent' => null],
+    ['name' => 'Clearing, Packing and Forwarding', 'parent' => 'Transit and Transport'],
+    ['name' => 'Transit and Transport Services', 'parent' => 'Transit and Transport'],
+    ['name' => 'Motorcycles and Bicycles Sale, Rent and Purchase', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Spare Parts Sale and Supply', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Vehicle and Motorcycle Maintenance', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Vehicle Rental', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Vehicle Sales and Purchase', 'parent' => 'Vehicle and Spare Part'],
+    ['name' => 'Warehouse and Store', 'parent' => null],
+    ['name' => 'Water and Water Works', 'parent' => null],
+    ['name' => 'Sewerage', 'parent' => 'Water and Water Works'],
+    ['name' => 'Water Engineering Machinery, Equipment and Tools', 'parent' => 'Water and Water Works'],
+    ['name' => 'Water Well Drilling and Water System Installation', 'parent' => 'Water and Water Works'],
+    ['name' => 'Wood and Wood Work', 'parent' => null],
+    ['name' => 'Date Extensions, Amendments and Cancelations', 'parent' => null],
+  ];
+  foreach ($categories as $category) {
+    if ($category['parent'] === null) {
+      beta_tender_ensure_term('tender_categories', $category['name']);
+    }
+  }
+  foreach ($categories as $category) {
+    if ($category['parent'] !== null) {
+      beta_tender_ensure_term('tender_categories', $category['name'], $category['parent']);
+    }
+  }
+
+  // Contractor types.
+  $contractor_types = [
+    ['name' => 'WDD', 'parent' => null],
+    ['name' => 'WWD', 'parent' => null],
+    ['name' => 'WWD-6', 'parent' => 'WWD'],
+    ['name' => 'WWD-8', 'parent' => 'WWD'],
+    ['name' => 'WDD-1', 'parent' => 'WDD'],
+    ['name' => 'WDD-2', 'parent' => 'WDD'],
+    ['name' => 'WDD-3', 'parent' => 'WDD'],
+    ['name' => 'WDD-4', 'parent' => 'WDD'],
+    ['name' => 'WDD-5', 'parent' => 'WDD'],
+    ['name' => 'WDD-6', 'parent' => 'WDD'],
+    ['name' => 'WDD-7', 'parent' => 'WDD'],
+    ['name' => 'WDD-8', 'parent' => 'WDD'],
+    ['name' => 'WDD-9', 'parent' => 'WDD'],
+    ['name' => 'WDD-10', 'parent' => 'WDD'],
+    ['name' => 'WC', 'parent' => null],
+    ['name' => 'WC-1', 'parent' => 'WC'],
+    ['name' => 'WC-2', 'parent' => 'WC'],
+    ['name' => 'WC-3', 'parent' => 'WC'],
+    ['name' => 'WC-4', 'parent' => 'WC'],
+    ['name' => 'WC-5', 'parent' => 'WC'],
+    ['name' => 'WC-6', 'parent' => 'WC'],
+    ['name' => 'WC-7', 'parent' => 'WC'],
+    ['name' => 'WC-8', 'parent' => 'WC'],
+    ['name' => 'WC-9', 'parent' => 'WC'],
+    ['name' => 'WC-10', 'parent' => 'WC'],
+    ['name' => 'WWC', 'parent' => null],
+    ['name' => 'WWC-1', 'parent' => 'WWC'],
+    ['name' => 'WWC-2', 'parent' => 'WWC'],
+    ['name' => 'WWC-3', 'parent' => 'WWC'],
+    ['name' => 'WWC-4', 'parent' => 'WWC'],
+    ['name' => 'WWC-5', 'parent' => 'WWC'],
+    ['name' => 'WWC-6', 'parent' => 'WWC'],
+    ['name' => 'WWC-7', 'parent' => 'WWC'],
+    ['name' => 'WWC-8', 'parent' => 'WWC'],
+    ['name' => 'WWC-9', 'parent' => 'WWC'],
+    ['name' => 'WWC-10', 'parent' => 'WWC'],
+    ['name' => 'PFW', 'parent' => null],
+    ['name' => 'PFW-1', 'parent' => 'PFW'],
+    ['name' => 'PFW-2', 'parent' => 'PFW'],
+    ['name' => 'PFW-3', 'parent' => 'PFW'],
+    ['name' => 'PFW-4', 'parent' => 'PFW'],
+    ['name' => 'PFW-5', 'parent' => 'PFW'],
+    ['name' => 'PFW-6', 'parent' => 'PFW'],
+    ['name' => 'PFW-7', 'parent' => 'PFW'],
+    ['name' => 'PFW-8', 'parent' => 'PFW'],
+    ['name' => 'PFW-9', 'parent' => 'PFW'],
+    ['name' => 'PFW-10', 'parent' => 'PFW'],
+    ['name' => 'EMC', 'parent' => null],
+    ['name' => 'EMC-1', 'parent' => 'EMC'],
+    ['name' => 'EMC-10', 'parent' => 'EMC'],
+    ['name' => 'EMC-2', 'parent' => 'EMC'],
+    ['name' => 'EMC-3', 'parent' => 'EMC'],
+    ['name' => 'EMC-4', 'parent' => 'EMC'],
+    ['name' => 'EMC-5', 'parent' => 'EMC'],
+    ['name' => 'EMC-6', 'parent' => 'EMC'],
+    ['name' => 'EMC-7', 'parent' => 'EMC'],
+    ['name' => 'EMC-8', 'parent' => 'EMC'],
+    ['name' => 'EMC-9', 'parent' => 'EMC'],
+    ['name' => 'GC', 'parent' => null],
+    ['name' => 'GC-1', 'parent' => 'GC'],
+    ['name' => 'GC-2', 'parent' => 'GC'],
+    ['name' => 'GC-3', 'parent' => 'GC'],
+    ['name' => 'GC-4', 'parent' => 'GC'],
+    ['name' => 'GC-5', 'parent' => 'GC'],
+    ['name' => 'GC-6', 'parent' => 'GC'],
+    ['name' => 'GC-7', 'parent' => 'GC'],
+    ['name' => 'GC-8', 'parent' => 'GC'],
+    ['name' => 'GC-9', 'parent' => 'GC'],
+    ['name' => 'GC-10', 'parent' => 'GC'],
+    ['name' => 'RC', 'parent' => null],
+    ['name' => 'RC-1', 'parent' => 'RC'],
+    ['name' => 'RC-2', 'parent' => 'RC'],
+    ['name' => 'RC-3', 'parent' => 'RC'],
+    ['name' => 'RC-4', 'parent' => 'RC'],
+    ['name' => 'RC-5', 'parent' => 'RC'],
+    ['name' => 'RC-6', 'parent' => 'RC'],
+    ['name' => 'RC-7', 'parent' => 'RC'],
+    ['name' => 'RC-8', 'parent' => 'RC'],
+    ['name' => 'RC-9', 'parent' => 'RC'],
+    ['name' => 'RC-10', 'parent' => 'RC'],
+    ['name' => 'BC', 'parent' => null],
+    ['name' => 'BC-1', 'parent' => 'BC'],
+    ['name' => 'BC-2', 'parent' => 'BC'],
+    ['name' => 'BC-3', 'parent' => 'BC'],
+    ['name' => 'BC-4', 'parent' => 'BC'],
+    ['name' => 'BC-5', 'parent' => 'BC'],
+    ['name' => 'BC-6', 'parent' => 'BC'],
+    ['name' => 'BC-7', 'parent' => 'BC'],
+    ['name' => 'BC-8', 'parent' => 'BC'],
+    ['name' => 'BC-9', 'parent' => 'BC'],
+    ['name' => 'BC-10', 'parent' => 'BC'],
+    ['name' => 'WWD-7', 'parent' => 'WWD'],
+    ['name' => 'WWD-3', 'parent' => 'WWD'],
+    ['name' => 'WWD-4', 'parent' => 'WWD'],
+    ['name' => 'WWD-1', 'parent' => 'WWD'],
+    ['name' => 'WWD-2', 'parent' => 'WWD'],
+    ['name' => 'WWD-5', 'parent' => 'WWD'],
+    ['name' => 'WWD-9', 'parent' => 'WWD'],
+    ['name' => 'WWD-10', 'parent' => 'WWD'],
+    ['name' => 'GC-', 'parent' => null],
+    ['name' => 'undefined', 'parent' => null],
+    ['name' => 'C', 'parent' => null],
+  ];
+  foreach ($contractor_types as $type) {
+    if ($type['parent'] === null) {
+      beta_tender_ensure_term('tender_contractor', $type['name']);
+    }
+  }
+  foreach ($contractor_types as $type) {
+    if ($type['parent'] !== null) {
+      beta_tender_ensure_term('tender_contractor', $type['name'], $type['parent']);
+    }
+  }
+
+  // Consultancy types.
+  $consultant_types = [
+    ['name' => 'ID&FC.C', 'parent' => null],
+    ['name' => 'L.C', 'parent' => null],
+    ['name' => 'Interior Design Consultant', 'parent' => null],
+    ['name' => 'HydpwrE.C', 'parent' => null],
+    ['name' => 'SI.C', 'parent' => null],
+    ['name' => 'ME.C', 'parent' => null],
+    ['name' => 'SBDW.C', 'parent' => null],
+    ['name' => 'HydE.C', 'parent' => null],
+    ['name' => 'EE.C', 'parent' => null],
+    ['name' => 'CM.C', 'parent' => null],
+    ['name' => 'A.C', 'parent' => null],
+    ['name' => 'EG.C', 'parent' => null],
+    ['name' => 'H&HE.C', 'parent' => null],
+    ['name' => 'H&B.C', 'parent' => null],
+    ['name' => 'EM.C', 'parent' => null],
+    ['name' => 'A & E.C', 'parent' => null],
+    ['name' => 'WR.C', 'parent' => null],
+    ['name' => 'WS&S/S/EE.C', 'parent' => null],
+    ['name' => 'ID&FC.C-2', 'parent' => 'ID&FC.C'],
+    ['name' => 'ID&FC.C-3', 'parent' => 'ID&FC.C'],
+    ['name' => 'ID&FC.C-1', 'parent' => 'ID&FC.C'],
+    ['name' => 'ID&FC.C-4', 'parent' => 'ID&FC.C'],
+    ['name' => 'ID&FC.C-5', 'parent' => 'ID&FC.C'],
+    ['name' => 'ID&FC.C-6', 'parent' => 'ID&FC.C'],
+    ['name' => 'L.C-1', 'parent' => 'L.C'],
+    ['name' => 'L.C-2', 'parent' => 'L.C'],
+    ['name' => 'L.C-3', 'parent' => 'L.C'],
+    ['name' => 'L.C-4', 'parent' => 'L.C'],
+    ['name' => 'HydpwrE.C-8', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-7', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-6', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-4', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-5', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-3', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-2', 'parent' => 'HydpwrE.C'],
+    ['name' => 'HydpwrE.C-1', 'parent' => 'HydpwrE.C'],
+    ['name' => 'SI.C-3', 'parent' => 'SI.C'],
+    ['name' => 'SI.C-4', 'parent' => 'SI.C'],
+    ['name' => 'SI.C-2', 'parent' => 'SI.C'],
+    ['name' => 'SI.C-1', 'parent' => 'SI.C'],
+    ['name' => 'SI.C-5', 'parent' => 'SI.C'],
+    ['name' => 'ME.C-3', 'parent' => 'ME.C'],
+    ['name' => 'ME.C-4', 'parent' => 'ME.C'],
+    ['name' => 'ME.C-2', 'parent' => 'ME.C'],
+    ['name' => 'ME.C-1', 'parent' => 'ME.C'],
+    ['name' => 'ME.C-5', 'parent' => 'ME.C'],
+    ['name' => 'ME.C-6', 'parent' => 'ME.C'],
+    ['name' => 'SBDW.C-5', 'parent' => 'SBDW.C'],
+    ['name' => 'SBDW.C-4', 'parent' => 'SBDW.C'],
+    ['name' => 'SBDW.C-3', 'parent' => 'SBDW.C'],
+    ['name' => 'SBDW.C-2', 'parent' => 'SBDW.C'],
+    ['name' => 'SBDW.C-1', 'parent' => 'SBDW.C'],
+    ['name' => 'HydE.C-4', 'parent' => 'HydE.C'],
+    ['name' => 'HydE.C-5', 'parent' => 'HydE.C'],
+    ['name' => 'HydE.C-3', 'parent' => 'HydE.C'],
+    ['name' => 'HydE.C-2', 'parent' => 'HydE.C'],
+    ['name' => 'HydE.C-1', 'parent' => 'HydE.C'],
+    ['name' => 'HydE.C-6', 'parent' => 'HydE.C'],
+    ['name' => 'EE.C-4', 'parent' => 'EE.C'],
+    ['name' => 'EE.C-5', 'parent' => 'EE.C'],
+    ['name' => 'EE.C-3', 'parent' => 'EE.C'],
+    ['name' => 'EE.C-2', 'parent' => 'EE.C'],
+    ['name' => 'EE.C-1', 'parent' => 'EE.C'],
+    ['name' => 'EE.C-6', 'parent' => 'EE.C'],
+    ['name' => 'CM.C-4', 'parent' => 'CM.C'],
+    ['name' => 'CM.C-5', 'parent' => 'CM.C'],
+    ['name' => 'CM.C-3', 'parent' => 'CM.C'],
+    ['name' => 'CM.C-2', 'parent' => 'CM.C'],
+    ['name' => 'CM.C-1', 'parent' => 'CM.C'],
+    ['name' => 'CM.C-6', 'parent' => 'CM.C'],
+    ['name' => 'A.C-6', 'parent' => 'A.C'],
+    ['name' => 'A.C-1', 'parent' => 'A.C'],
+    ['name' => 'A.C-5', 'parent' => 'A.C'],
+    ['name' => 'A.C-4', 'parent' => 'A.C'],
+    ['name' => 'A.C-3', 'parent' => 'A.C'],
+    ['name' => 'A.C-2', 'parent' => 'A.C'],
+    ['name' => 'EG.C-4', 'parent' => 'EG.C'],
+    ['name' => 'EG.C-5', 'parent' => 'EG.C'],
+    ['name' => 'EG.C-3', 'parent' => 'EG.C'],
+    ['name' => 'EG.C-2', 'parent' => 'EG.C'],
+    ['name' => 'EG.C-1', 'parent' => 'EG.C'],
+    ['name' => 'H&HE.C-6', 'parent' => 'H&HE.C'],
+    ['name' => 'H&HE.C-4', 'parent' => 'H&HE.C'],
+    ['name' => 'H&HE.C-5', 'parent' => 'H&HE.C'],
+    ['name' => 'H&HE.C-3', 'parent' => 'H&HE.C'],
+    ['name' => 'H&HE.C-2', 'parent' => 'H&HE.C'],
+    ['name' => 'H&HE.C-1', 'parent' => 'H&HE.C'],
+    ['name' => 'H&B.C-4', 'parent' => 'H&B.C'],
+    ['name' => 'H&B.C-5', 'parent' => 'H&B.C'],
+    ['name' => 'H&B.C-3', 'parent' => 'H&B.C'],
+    ['name' => 'H&B.C-2', 'parent' => 'H&B.C'],
+    ['name' => 'H&B.C-1', 'parent' => 'H&B.C'],
+    ['name' => 'H&B.C-6', 'parent' => 'H&B.C'],
+    ['name' => 'EM.C-6', 'parent' => 'EM.C'],
+    ['name' => 'EM.C-1', 'parent' => 'EM.C'],
+    ['name' => 'EM.C-5', 'parent' => 'EM.C'],
+    ['name' => 'EM.C-4', 'parent' => 'EM.C'],
+    ['name' => 'EM.C-3', 'parent' => 'EM.C'],
+    ['name' => 'EM.C-2', 'parent' => 'EM.C'],
+    ['name' => 'A & E.C-4', 'parent' => 'A & E.C'],
+    ['name' => 'A & E.C-5', 'parent' => 'A & E.C'],
+    ['name' => 'A & E.C-3', 'parent' => 'A & E.C'],
+    ['name' => 'A & E.C-2', 'parent' => 'A & E.C'],
+    ['name' => 'A & E.C-1', 'parent' => 'A & E.C'],
+    ['name' => 'WR.C-1', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-2', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-3', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-4', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-5', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-6', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-7', 'parent' => 'WR.C'],
+    ['name' => 'WR.C-8', 'parent' => 'WR.C'],
+    ['name' => 'WS&S/S/EE.C-1', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-2', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-3', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-4', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-5', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-6', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-7', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'WS&S/S/EE.C-8', 'parent' => 'WS&S/S/EE.C'],
+    ['name' => 'undefined', 'parent' => null],
+    ['name' => 'GC', 'parent' => null],
+  ];
+  foreach ($consultant_types as $type) {
+    if ($type['parent'] === null) {
+      beta_tender_ensure_term('tender_consultancy', $type['name']);
+    }
+  }
+  foreach ($consultant_types as $type) {
+    if ($type['parent'] !== null) {
+      beta_tender_ensure_term('tender_consultancy', $type['name'], $type['parent']);
+    }
+  }
+}
+
+/**
+ * @throws EntityStorageException
+ */
+function _delete_vocabularies(): void
+{
+  // List of vocabulary machine names to delete.
+  $vocabularies = [
+    'regions',
+    'tender_categories',
+    'tender_contractor',
+    'tender_consultancy',
+    'tender_sources',
+  ];
+
+  // Load and delete each vocabulary.
+  foreach ($vocabularies as $vid) {
+    if ($vocab = Vocabulary::load($vid)) {
+      $vocab->delete();
+    }
+  }
+}
+
+/**
+ * Ensure a term exists in a vocabulary, creating it if missing.
+ * If $parent_name is provided, ensure the parent exists and set the parent.
+ */
+function beta_tender_ensure_term(string $vid, string $name, string $parent_name = NULL): int {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $existing = $storage->loadByProperties(['vid' => $vid, 'name' => $name]);
+  if ($existing) {
+    $term = reset($existing);
+    return (int) $term->id();
+  }
+
+  $values = [
+    'vid' => $vid,
+    'name' => $name,
+  ];
+
+  if ($parent_name) {
+    $parent_existing = $storage->loadByProperties(['vid' => $vid, 'name' => $parent_name]);
+    if ($parent_existing) {
+      $parent = reset($parent_existing);
+      $values['parent'] = [(int) $parent->id()];
+    }
+  }
+
+  $term = Term::create($values);
+  $term->save();
+  return (int) $term->id();
 }

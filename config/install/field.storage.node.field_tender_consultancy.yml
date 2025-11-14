@@ -3,17 +3,17 @@ status: true
 dependencies:
   module:
     - node
-    - user
+    - taxonomy
     - beta_tender
-id: node.field_assigned_editor
-field_name: field_assigned_editor
+id: node.field_tender_consultancy
+field_name: field_tender_consultancy
 entity_type: node
 type: entity_reference
 settings:
-  target_type: user
+  target_type: taxonomy_term
 module: core
 locked: false
-cardinality: 1
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

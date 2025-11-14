@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.field_scanned_images
     - node.type.tender
   module:
+    - beta_tender
     - image
 id: node.tender.field_scanned_images
 field_name: field_scanned_images

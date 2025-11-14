@@ -4,6 +4,7 @@ dependencies:
   module:
     - datetime
     - node
+    - beta_tender
 id: node.field_opening_date
 field_name: field_opening_date
 entity_type: node

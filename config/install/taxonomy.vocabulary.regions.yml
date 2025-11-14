@@ -1,6 +1,8 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - beta_tender
 name: 'Regions'
 vid: regions
 description: 'Geographical regions for tender classification'

@@ -5,6 +5,8 @@ dependencies:
     - field.storage.node.field_tender_source
     - node.type.tender
     - taxonomy.vocabulary.tender_sources
+  module:
+    - beta_tender
 id: node.tender.field_tender_source
 field_name: field_tender_source
 entity_type: node

@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   module:
-    - media
-    - taxonomy
-id: media.field_media_source
-field_name: field_media_source
-entity_type: media
-type: entity_reference
+    - node
+    - beta_tender
+id: node.field_publish_date
+field_name: field_publish_date
+entity_type: node
+type: datetime
 settings:
-  target_type: taxonomy_term
+  datetime_type: 'datetime'
 module: core
 locked: false
 cardinality: 1

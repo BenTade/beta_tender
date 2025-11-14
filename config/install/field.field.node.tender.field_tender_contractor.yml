@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_tender_categories
+    - field.storage.node.field_tender_contractor
     - node.type.tender
-    - taxonomy.vocabulary.tender_categories
+    - taxonomy.vocabulary.tender_contractor
   module:
     - beta_tender
-id: node.tender.field_tender_categories
-field_name: field_tender_categories
+id: node.tender.field_tender_contractor
+field_name: field_tender_contractor
 entity_type: node
 bundle: tender
-label: 'Categories'
-description: 'Categories for classifying this tender'
+label: 'Contractor'
+description: ''
 required: false
 translatable: false
 default_value: {  }
@@ -21,7 +21,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      tender_categories: tender_categories
+      tender_contractor: tender_contractor
     sort:
       field: name
       direction: asc

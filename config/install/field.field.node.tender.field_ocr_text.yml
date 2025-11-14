@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.field_ocr_text
     - node.type.tender
   module:
+    - beta_tender
     - text
 id: node.tender.field_ocr_text
 field_name: field_ocr_text
