@@ -23,6 +23,16 @@ function beta_tender_install() {
   }
   
   $config->save();
+
+  // Populate vocabularies immediately on fresh install.
+  try {
+    beta_tender_populate_vocabularies();
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('beta_tender')->error('Failed to populate vocabularies on install: @message', [
+      '@message' => $e->getMessage(),
+    ]);
+  }
   
   \Drupal::messenger()->addStatus(t('Beta Tender module has been installed. Please configure the module at <a href=":url">Beta Tender Settings</a>.', [
     ':url' => '/admin/config/beta_tender',
@@ -192,7 +202,7 @@ function beta_tender_populate_vocabularies(): void {
     }
   }
 
-  // Regions.
+  // Regions. (15 terms)
   $ethiopian_regions = [
     'አዲስ አበባ (Addis Ababa)',
     'አፋር (Afar)',
@@ -214,7 +224,7 @@ function beta_tender_populate_vocabularies(): void {
     beta_tender_ensure_term('regions', $region);
   }
 
-  // Newspapers.
+  // Newspapers. (10 terms)
   $ethiopian_newspapers = [
     'አዲስ ዘመን (Addis Zemen)',
     'Ethiopian Herald',
@@ -231,7 +241,7 @@ function beta_tender_populate_vocabularies(): void {
     beta_tender_ensure_term('tender_sources', $paper);
   }
 
-  // Categories.
+  // Categories. (177 terms)
   $categories = [
     ['name' => 'General Service Provision', 'parent' => null],
     ['name' => 'Gifts and Crafts', 'parent' => null],
@@ -424,7 +434,7 @@ function beta_tender_populate_vocabularies(): void {
     }
   }
 
-  // Contractor types.
+  // Contractor types. (102 terms)
   $contractor_types = [
     ['name' => 'WDD', 'parent' => null],
     ['name' => 'WWD', 'parent' => null],
@@ -540,7 +550,7 @@ function beta_tender_populate_vocabularies(): void {
     }
   }
 
-  // Consultancy types.
+  // Consultancy types. (122 terms)
   $consultant_types = [
     ['name' => 'ID&FC.C', 'parent' => null],
     ['name' => 'L.C', 'parent' => null],
