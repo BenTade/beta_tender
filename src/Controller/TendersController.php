@@ -3,9 +3,10 @@
 namespace Drupal\beta_tender\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -161,13 +162,21 @@ class TendersController extends ControllerBase {
     // Prepare dateline data for template.
     $dateline_data = [];
     foreach ($datelines as $dateline) {
+      if (empty($dateline['source_id'])) {
+        // Cannot build the dateline detail route without a source ID.
+        continue;
+      }
+
       $dateline_data[] = [
         'source_id' => $dateline['source_id'],
         'source_name' => $dateline['source_name'],
         'date' => $dateline['date'],
         'formatted_date' => $this->dateFormatter->format(strtotime($dateline['date']), 'custom', 'F j, Y'),
         'tender_count' => count($dateline['tenders']),
-        'url' => "/admin/content/tender/dateline/{$dateline['source_id']}/{$dateline['date']}",
+        'url' => Url::fromRoute('beta_tender.dateline_detail', [
+          'source_id' => $dateline['source_id'],
+          'date' => $dateline['date'],
+        ])->toString(),
       ];
     }
 
