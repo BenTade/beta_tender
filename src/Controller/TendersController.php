@@ -44,6 +44,13 @@ class TendersController extends ControllerBase {
   protected $pagerManager;
 
   /**
+   * Cached moderation state labels keyed by state ID.
+   *
+   * @var string[]
+   */
+  protected $moderationStateLabels = [];
+
+  /**
    * Constructs a TendersController object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -292,16 +299,11 @@ class TendersController extends ControllerBase {
         }
       }
       
-      // Get proofread status from moderation state.
-      $proofread_status = $this->t('Needs Review');
+      // Resolve moderation state label to show accurate workflow status.
+      $moderation_label = (string) $this->t('Unknown');
       if ($tender->hasField('moderation_state') && !$tender->get('moderation_state')->isEmpty()) {
         $status_value = $tender->get('moderation_state')->value;
-        $status_labels = [
-          'needs_review' => $this->t('Needs Review'),
-          'in_review' => $this->t('In Review'),
-          'reviewed' => $this->t('Reviewed'),
-        ];
-        $proofread_status = $status_labels[$status_value] ?? $this->t('Unknown');
+        $moderation_label = $this->getModerationStateLabel($status_value);
       }
       
       // Get share/sync status (placeholder for now - Entity Share integration).
@@ -315,7 +317,7 @@ class TendersController extends ControllerBase {
         'author' => $author_name,
         'created' => $this->dateFormatter->format($tender->getCreatedTime(), 'short'),
         'changed' => $this->dateFormatter->format($tender->getChangedTime(), 'short'),
-        'proofread_status' => $proofread_status,
+        'moderation_state' => $moderation_label,
         'editor' => $editor_name,
         'share_status' => $share_status,
       ];
@@ -334,6 +336,28 @@ class TendersController extends ControllerBase {
     ];
 
     return $build;
+  }
+
+  /**
+   * Get a translated moderation state label for a given state ID.
+   */
+  protected function getModerationStateLabel(?string $state_id): string {
+    if (!$state_id) {
+      return (string) $this->t('Unknown');
+    }
+
+    if (!isset($this->moderationStateLabels[$state_id])) {
+      $label = ucfirst(str_replace('_', ' ', $state_id));
+      if ($this->entityTypeManager->hasDefinition('moderation_state')) {
+        $storage = $this->entityTypeManager->getStorage('moderation_state');
+        if ($state = $storage->load($state_id)) {
+          $label = $state->label();
+        }
+      }
+      $this->moderationStateLabels[$state_id] = $label;
+    }
+
+    return $this->moderationStateLabels[$state_id];
   }
 
 }
