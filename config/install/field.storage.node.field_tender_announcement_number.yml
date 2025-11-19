@@ -3,17 +3,19 @@ status: true
 dependencies:
   module:
     - node
-    - text
     - beta_tender
-id: node.field_ocr_text
-field_name: field_ocr_text
+id: node.field_tender_announcement_number
+field_name: field_tender_announcement_number
 entity_type: node
-type: text_long
-settings: {  }
-module: text
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true
-indexes: {  }
+indexes: { }
 persist_with_no_fields: false
 custom_storage: false

@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_body
+    - node.type.tender
+  module:
+    - text
+    - beta_tender
+id: node.tender.field_body
+field_name: field_body
+entity_type: node
+bundle: tender
+label: 'Tender Body'
+description: 'Primary tender body content with a required summary.'
+required: true
+translatable: true
+default_value:
+  -
+    value: ''
+    summary: ''
+    format: content
+default_value_callback: ''
+settings:
+  display_summary: true
+  summary_required: true
+field_type: text_with_summary
+third_party_settings: { }

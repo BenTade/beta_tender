@@ -397,11 +397,20 @@ jobs:
               $source_term = reset($source_terms);
               
               // Create tender node
+              $summary = substr($data['ocr_text'], 0, 240);
+              if (strlen($data['ocr_text']) > 240) {
+                $summary = rtrim($summary) . '...';
+              }
+
               $node = Node::create([
                 'type' => 'tender',
                 'title' => $data['title'] . ' - ' . $data['tender_no'],
                 'status' => 1,
-                'field_ocr_text' => $data['ocr_text'],
+                'field_body' => [
+                  'value' => $data['ocr_text'],
+                  'summary' => $summary,
+                  'format' => 'content',
+                ],
                 'field_opening_date' => $data['opening_date'],
                 'field_closing_date' => $data['closing_date'],
               ]);
@@ -431,7 +440,7 @@ jobs:
           echo "  - Created " . array_sum(array_map('count', $terms_data)) . " taxonomy terms\n";
           echo "  - Created " . count($sample_images) . " realistic test image files\n";
           echo "  - Created " . count($sample_media) . " scanned image media entities\n";
-          echo "  - Created 3 tender nodes with OCR text from images\n";
+          echo "  - Created 3 tender nodes with populated body text and summaries\n";
           echo "\n📸 Test images created with actual text content for OCR demonstration\n";
           EOPHP
 

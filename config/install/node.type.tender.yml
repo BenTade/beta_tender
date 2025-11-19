@@ -8,6 +8,9 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
+  content_moderation:
+    enabled: true
+    workflow: tender_proofreading
 name: Tender
 type: tender
 description: 'Content type for tenders created from scanned images with OCR processing'

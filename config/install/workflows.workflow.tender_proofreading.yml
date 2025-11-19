@@ -1,0 +1,81 @@
+uuid: 3f5b57c1-71c4-4853-886a-9e7b934b1d5d
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_moderation
+    - node
+    - beta_tender
+id: tender_proofreading
+label: 'Tender Proofreading'
+type: content_moderation
+third_party_settings: { }
+type_settings:
+  entity_types:
+    node:
+      - tender
+  states:
+    draft:
+      label: 'Draft'
+      weight: -20
+      published: false
+      default_revision: false
+    needs_review:
+      label: 'Needs Review'
+      weight: -10
+      published: false
+      default_revision: false
+    in_review:
+      label: 'In Review'
+      weight: 0
+      published: false
+      default_revision: false
+    reviewed:
+      label: 'Reviewed'
+      weight: 10
+      published: false
+      default_revision: false
+    published:
+      label: 'Published'
+      weight: 20
+      published: true
+      default_revision: true
+  transitions:
+    submit_for_review:
+      label: 'Send to Review'
+      from:
+        - needs_review
+        - published
+      to: in_review
+      weight: -10
+    request_changes:
+      label: 'Request Changes'
+      from:
+        - in_review
+      to: needs_review
+      weight: -5
+    mark_reviewed:
+      label: 'Mark Reviewed'
+      from:
+        - in_review
+      to: reviewed
+      weight: 0
+    publish_in_review:
+      label: 'Publish from Review'
+      from:
+        - in_review
+      to: published
+      weight: 5
+    reopen_review:
+      label: 'Reopen Review'
+      from:
+        - reviewed
+      to: in_review
+      weight: 5
+    publish_reviewed:
+      label: 'Publish'
+      from:
+        - reviewed
+      to: published
+      weight: 10
+  default_moderation_state: needs_review

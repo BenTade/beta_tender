@@ -45,6 +45,11 @@
           {% endfor %}
         </tbody>
       </table>
+      {% if pager %}
+        <div class="tender-pager">
+          {{ pager }}
+        </div>
+      {% endif %}
     </div>
   {% endif %}
 </div>

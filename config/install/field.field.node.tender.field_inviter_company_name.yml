@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_inviter_company_name
+    - node.type.tender
+  module:
+    - beta_tender
+id: node.tender.field_inviter_company_name
+field_name: field_inviter_company_name
+entity_type: node
+bundle: tender
+label: 'Inviter Company Name'
+description: 'Company or organization inviting the tender.'
+required: false
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings:
+  max_length: 255
+field_type: string
+third_party_settings: { }

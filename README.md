@@ -15,7 +15,7 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 - **OCR Integration**: Extract text from images using configurable OCR backends (document_ocr or ocr_image)
 - **Drag-and-Drop Image Arrangement**: Group multiple images into single tenders using Drupal's tabledrag
 - **Batch Processing**: Process multiple tender groups with OCR using Drupal's Batch API
-- **Comprehensive Tender Tracking**: View author, creation date, last update, proofread status, and share status
+- **Comprehensive Tender Tracking**: View author, creation date, last update, moderation state, and share status
 - **Proofreading Workflow**: Assign tenders to editors for review with status tracking
 - **Content Synchronization**: Integration with Entity Share for pushing content to production
 
@@ -82,7 +82,7 @@ Assign the following permissions to appropriate roles:
      - Author who created the tender
      - Created date and time
      - Last updated date and time
-     - Proofread status (Needs Review, In Review, Reviewed)
+   - Moderation state (Needs Review, In Review, Reviewed)
      - Assigned proofreader
      - Share/sync status
 
@@ -104,10 +104,10 @@ Assign the following permissions to appropriate roles:
    - From the dateline detail view, click "Edit" on any tender
    - Verify OCR accuracy
    - Correct any errors in extracted fields
-   - Update proofread status when complete
+   - Advance the moderation state (Needs Review → In Review → Reviewed) when complete
 
 2. **Track Progress**:
-   - View proofread status in the dateline detail view
+   - View moderation state badges in the dateline detail view
    - See who is assigned to proofread each tender
    - Monitor share/sync status for published tenders
 
@@ -117,14 +117,19 @@ Assign the following permissions to appropriate roles:
 
 - **Title**: Auto-generated from OCR text
 - **Scanned Images**: Multiple image files
+- **Tender Announcement Number**: Plain text identifier from the publication
 - **Source**: Reference to tender source taxonomy
-- **OCR Text**: Extracted text from images
+- **Publish Date**: Date-only field representing the print/announce date
 - **Opening Date**: Tender opening date
 - **Closing Date**: Tender closing date
-- **Categories**: Multiple tender category terms
 - **Region**: Geographical region
-- **Proofreading Status**: needs_review, in_review, reviewed
-- **Assigned Editor**: User reference
+- **Categories**: Multiple tender category terms
+- **Tender Contractor**: Contractor taxonomy selection
+- **Tender Consultancy**: Consultancy taxonomy selection
+- **Inviter Company Name**: Plain text organization label
+- **Tender Body**: Rich text with required summary (stores OCR output)
+- **Assigned Editor**: User reference for proofreading ownership
+- **Content Moderation**: Custom "Tender Proofreading" workflow (Needs Review, In Review, Reviewed)
 
 ### Scanned Image Media Type
 

@@ -42,6 +42,13 @@ class TenderCreationService {
   protected $time;
 
   /**
+   * Cached text format for tender body fields.
+   *
+   * @var string|null
+   */
+  protected $bodyFormat;
+
+  /**
    * Constructs a TenderCreationService object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -116,21 +123,24 @@ class TenderCreationService {
       $tender_data = $this->parseTenderData($full_ocr_text);
 
       // Create the tender node.
+      $body_format = $this->resolveBodyFormat();
+      $body_summary = $this->buildSummary($full_ocr_text);
       $node_storage = $this->entityTypeManager->getStorage('node');
       $node = $node_storage->create([
         'type' => 'tender',
         'title' => $tender_data['title'],
         'field_scanned_images' => $file_ids,
         'field_tender_source' => $source_id ? ['target_id' => $source_id] : [],
-        'field_ocr_text' => [
+        'field_body' => [
           'value' => $full_ocr_text,
-          'format' => 'plain_text',
+          'summary' => $body_summary,
+          'format' => $body_format,
         ],
         'field_opening_date' => $tender_data['opening_date'] ? ['value' => $tender_data['opening_date']] : [],
         'field_closing_date' => $tender_data['closing_date'] ? ['value' => $tender_data['closing_date']] : [],
         'field_tender_categories' => $tender_data['categories'],
         'field_region' => $tender_data['region'] ? ['target_id' => $tender_data['region']] : [],
-        'field_proofreading_status' => 'needs_review',
+        'moderation_state' => 'needs_review',
         'status' => 0, // Unpublished by default.
       ]);
 
@@ -248,6 +258,42 @@ class TenderCreationService {
     }
 
     return NULL;
+  }
+
+  /**
+   * Build a required summary for the tender body field.
+   */
+  protected function buildSummary(string $text): string {
+    $normalized = trim(preg_replace('/\s+/', ' ', $text));
+    if ($normalized === '') {
+      return 'Summary auto-generated from OCR content. Please refine during proofreading.';
+    }
+
+    $max_length = 600;
+    if (mb_strlen($normalized) <= $max_length) {
+      return $normalized;
+    }
+
+    return rtrim(mb_substr($normalized, 0, $max_length - 3)) . '...';
+  }
+
+  /**
+   * Resolve the preferred text format for tender body fields.
+   */
+  protected function resolveBodyFormat(): string {
+    if ($this->bodyFormat !== NULL) {
+      return $this->bodyFormat;
+    }
+
+    $format_storage = $this->entityTypeManager->getStorage('filter_format');
+    if ($format_storage && $format_storage->load('content')) {
+      $this->bodyFormat = 'content';
+    }
+    else {
+      $this->bodyFormat = 'plain_text';
+    }
+
+    return $this->bodyFormat;
   }
 
   /**

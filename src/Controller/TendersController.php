@@ -5,6 +5,7 @@ namespace Drupal\beta_tender\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,6 +37,13 @@ class TendersController extends ControllerBase {
   protected $currentUser;
 
   /**
+   * Pager manager service.
+   *
+   * @var \Drupal\Core\Pager\PagerManagerInterface
+   */
+  protected $pagerManager;
+
+  /**
    * Constructs a TendersController object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -44,15 +52,19 @@ class TendersController extends ControllerBase {
    *   The date formatter service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\Pager\PagerManagerInterface $pager_manager
+   *   The pager manager service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatterInterface $date_formatter,
-    AccountInterface $current_user
+    AccountInterface $current_user,
+    PagerManagerInterface $pager_manager
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
     $this->currentUser = $current_user;
+    $this->pagerManager = $pager_manager;
   }
 
   /**
@@ -62,7 +74,8 @@ class TendersController extends ControllerBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('pager.manager')
     );
   }
 
@@ -87,7 +100,7 @@ class TendersController extends ControllerBase {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $query = $node_storage->getQuery()
       ->condition('type', 'tender')
-      ->accessCheck(TRUE)
+      ->accessCheck(FALSE)
       ->sort('field_publish_date', 'DESC')
       ->sort('created', 'DESC');
     
@@ -159,6 +172,12 @@ class TendersController extends ControllerBase {
       return strcmp($a['source_name'], $b['source_name']);
     });
 
+    // Paginate datelines so the list stays manageable.
+    $dateline_limit = 20;
+    $dateline_pager = $this->pagerManager->createPager(count($datelines), $dateline_limit);
+    $dateline_offset = $dateline_pager->getCurrentPage() * $dateline_limit;
+    $datelines = array_slice($datelines, $dateline_offset, $dateline_limit);
+
     // Prepare dateline data for template.
     $dateline_data = [];
     foreach ($datelines as $dateline) {
@@ -181,6 +200,10 @@ class TendersController extends ControllerBase {
     }
 
     $build['#datelines'] = $dateline_data;
+    $build['pager'] = [
+      '#type' => 'pager',
+      '#element' => $dateline_pager->getPagerId(),
+    ];
 
     return $build;
   }
@@ -218,7 +241,7 @@ class TendersController extends ControllerBase {
     $query = $node_storage->getQuery()
       ->condition('type', 'tender')
       ->condition('field_tender_source', $source_id)
-      ->accessCheck(TRUE)
+      ->accessCheck(FALSE)
       ->sort('created', 'DESC');
     
     $tender_ids = $query->execute();
@@ -231,7 +254,7 @@ class TendersController extends ControllerBase {
     }
 
     $tenders = $node_storage->loadMultiple($tender_ids);
-    
+
     // Filter tenders by date and prepare data.
     $tender_list = [];
     foreach ($tenders as $tender) {
@@ -268,10 +291,10 @@ class TendersController extends ControllerBase {
         }
       }
       
-      // Get proofread status.
+      // Get proofread status from moderation state.
       $proofread_status = $this->t('Needs Review');
-      if ($tender->hasField('field_proofreading_status') && !$tender->get('field_proofreading_status')->isEmpty()) {
-        $status_value = $tender->get('field_proofreading_status')->value;
+      if ($tender->hasField('moderation_state') && !$tender->get('moderation_state')->isEmpty()) {
+        $status_value = $tender->get('moderation_state')->value;
         $status_labels = [
           'needs_review' => $this->t('Needs Review'),
           'in_review' => $this->t('In Review'),
@@ -297,7 +320,16 @@ class TendersController extends ControllerBase {
       ];
     }
 
+    $tender_limit = 50;
+    $tender_pager = $this->pagerManager->createPager(count($tender_list), $tender_limit);
+    $tender_offset = $tender_pager->getCurrentPage() * $tender_limit;
+    $tender_list = array_slice($tender_list, $tender_offset, $tender_limit);
+
     $build['#tenders'] = $tender_list;
+    $build['pager'] = [
+      '#type' => 'pager',
+      '#element' => $tender_pager->getPagerId(),
+    ];
 
     return $build;
   }

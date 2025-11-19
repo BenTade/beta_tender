@@ -128,7 +128,7 @@ composer.json                 - Composer package definition
 - `/admin/content/tender/proofread/assign-next` - Auto-assignment
 
 **Features**:
-- Status-based filtering (needs_review, in_review, reviewed)
+- Moderation-state filtering (Needs Review, In Review, Reviewed)
 - Automatic tender assignment
 - Editor tracking
 - Redirect to edit form
@@ -199,15 +199,17 @@ composer.json                 - Composer package definition
 | Field | Type | Description |
 |-------|------|-------------|
 | title | string | Auto-generated from OCR text |
+| field_body | text_with_summary | OCR-derived tender body with required summary |
 | field_scanned_images | image (multiple) | Source image files |
 | field_tender_source | entity_reference | Source publication |
-| field_ocr_text | text_long | Extracted OCR text |
+| field_tender_announcement_number | string | Publication's announcement or tender number |
+| field_inviter_company_name | string | Company or organization inviting the tender |
 | field_opening_date | date | Tender opening date |
 | field_closing_date | date | Tender closing date |
 | field_tender_categories | entity_reference (multiple) | Category terms |
 | field_region | entity_reference | Geographic region |
-| field_proofreading_status | list_string | Review status |
 | field_assigned_editor | entity_reference | Assigned user |
+| moderation_state | workflow state | Needs Review → In Review → Reviewed |
 
 ### Scanned Image Media Type (media.scanned_image)
 
@@ -250,7 +252,7 @@ composer.json                 - Composer package definition
    ↓
 4. Editor reviews and corrects tender
    ↓
-5. Change status to "Reviewed"
+5. Change moderation state to "Reviewed"
    ↓
 6. Tender ready for publication
 ```
@@ -332,7 +334,7 @@ composer.json                 - Composer package definition
 - **Visual Feedback**: Clear indentation and drag handles
 
 ### 5. Editorial Workflow
-- **Status Tracking**: Three-state workflow (needs_review, in_review, reviewed)
+- **Status Tracking**: Three-state content moderation workflow (Needs Review → In Review → Reviewed)
 - **Assignment System**: Automatic assignment to current user
 - **Editor Tracking**: Links tenders to specific users
 

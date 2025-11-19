@@ -4,16 +4,18 @@ dependencies:
   module:
     - node
     - beta_tender
-id: node.field_publish_date
-field_name: field_publish_date
+id: node.field_inviter_company_name
+field_name: field_inviter_company_name
 entity_type: node
-type: datetime
+type: string
 settings:
-  datetime_type: date
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
 module: core
 locked: false
 cardinality: 1
 translatable: true
-indexes: {  }
+indexes: { }
 persist_with_no_fields: false
 custom_storage: false

@@ -92,7 +92,7 @@ class ProofreadController extends ControllerBase {
     foreach ($statuses as $status_value => $status_label) {
       $query = $node_storage->getQuery()
         ->condition('type', 'tender')
-        ->condition('field_proofreading_status', $status_value)
+        ->condition('moderation_state', $status_value)
         ->accessCheck(TRUE)
         ->sort('created', 'ASC');
       
@@ -152,7 +152,7 @@ class ProofreadController extends ControllerBase {
     // Find the oldest tender with "needs_review" status.
     $query = $node_storage->getQuery()
       ->condition('type', 'tender')
-      ->condition('field_proofreading_status', 'needs_review')
+      ->condition('moderation_state', 'needs_review')
       ->accessCheck(TRUE)
       ->sort('created', 'ASC')
       ->range(0, 1);
@@ -170,7 +170,7 @@ class ProofreadController extends ControllerBase {
     if ($tender) {
       // Assign to current user and change status to "in_review".
       $tender->set('field_assigned_editor', $this->currentUser->id());
-      $tender->set('field_proofreading_status', 'in_review');
+      $tender->set('moderation_state', 'in_review');
       $tender->save();
       
       $this->messenger()->addStatus($this->t('Tender "@title" has been assigned to you.', [

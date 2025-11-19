@@ -14,4 +14,5 @@ dependencies:
   - drupal:media
   - drupal:text
   - drupal:user
+  - drupal:content_moderation
   - entity_share:entity_share
