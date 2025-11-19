@@ -174,7 +174,8 @@ class TendersController extends ControllerBase {
 
     // Paginate datelines so the list stays manageable.
     $dateline_limit = 20;
-    $dateline_pager = $this->pagerManager->createPager(count($datelines), $dateline_limit);
+    $dateline_element = 0;
+    $dateline_pager = $this->pagerManager->createPager(count($datelines), $dateline_limit, $dateline_element);
     $dateline_offset = $dateline_pager->getCurrentPage() * $dateline_limit;
     $datelines = array_slice($datelines, $dateline_offset, $dateline_limit);
 
@@ -202,7 +203,7 @@ class TendersController extends ControllerBase {
     $build['#datelines'] = $dateline_data;
     $build['pager'] = [
       '#type' => 'pager',
-      '#element' => $dateline_pager->getPagerId(),
+      '#element' => $dateline_element,
     ];
 
     return $build;
@@ -321,14 +322,15 @@ class TendersController extends ControllerBase {
     }
 
     $tender_limit = 50;
-    $tender_pager = $this->pagerManager->createPager(count($tender_list), $tender_limit);
+    $tender_element = 1;
+    $tender_pager = $this->pagerManager->createPager(count($tender_list), $tender_limit, $tender_element);
     $tender_offset = $tender_pager->getCurrentPage() * $tender_limit;
     $tender_list = array_slice($tender_list, $tender_offset, $tender_limit);
 
     $build['#tenders'] = $tender_list;
     $build['pager'] = [
       '#type' => 'pager',
-      '#element' => $tender_pager->getPagerId(),
+      '#element' => $tender_element,
     ];
 
     return $build;
