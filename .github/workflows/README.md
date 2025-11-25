@@ -4,61 +4,7 @@ This directory contains automated testing workflows for the Beta Tender Drupal m
 
 ## 🔄 Workflows
 
-### 1. Drupal Module Tests (`drupal-module-tests.yml`)
-
-**Comprehensive testing workflow** that runs on push and pull requests.
-
-#### Test Jobs:
-
-1. **PHP Syntax Check** ✓
-   - Validates PHP syntax for all `.php` files
-   - Ensures code can be parsed by PHP 8.3
-
-2. **Drupal Coding Standards** 📋
-   - Runs PHPCS with Drupal and DrupalPractice standards
-   - Generates detailed reports on coding standard violations
-   - Creates artifacts with full reports
-
-3. **YAML Validation** 📄
-   - Validates all `.yml` configuration files
-   - Uses yamllint to catch syntax errors
-
-4. **Drupal Module Installation** 🚀
-   - Creates a fresh Drupal 11 installation
-   - Attempts to enable the Beta Tender module
-   - Generates installation logs and reports
-   - Verifies module appears in module list
-
-5. **PHPUnit Tests** 🧪
-   - Runs the module's test suite
-   - Includes both Kernel and Functional tests
-   - Generates test results report
-
-6. **Visual Verification** 📸
-   - Installs Drupal with the module
-   - Captures screenshots of key pages:
-     - Admin dashboard
-     - Module list
-     - Tender dashboard
-     - Configuration page
-     - Content types
-   - Uses Playwright for browser automation
-
-7. **Test Summary** 📊
-   - Aggregates results from all test jobs
-   - Creates a visual summary with status badges
-   - Comments on pull requests with results
-
-#### Artifacts Generated:
-
-- `phpcs-reports/` - Coding standards reports
-- `installation-report/` - Module installation logs
-- `phpunit-report/` - Test results
-- `visual-screenshots/` - Screenshots of Drupal UI
-- `visual-report/` - Visual verification report
-- `test-summary/` - Overall test summary
-
-### 2. Quick Checks (`quick-checks.yml`)
+### 1. Quick Checks (`quick-checks.yml`)
 
 **Fast validation workflow** for quick feedback on syntax and common issues.
 
@@ -68,9 +14,9 @@ This directory contains automated testing workflows for the Beta Tender Drupal m
 - TODO/FIXME comment scanning
 - File permission checks
 
-Runs quickly on every push to provide immediate feedback.
+Runs quickly on every push and pull request to provide immediate feedback.
 
-### 3. Feature Demonstration (`feature-demonstration.yml`) ⭐ NEW
+### 2. Feature Demonstration (`feature-demonstration.yml`) ⭐
 
 **Comprehensive feature walkthrough** that demonstrates all module features in action with visual verification.
 
@@ -121,14 +67,11 @@ Runs quickly on every push to provide immediate feedback.
 - ✅ **Documentation** - Screenshots for user guides
 - ✅ **Stakeholder Demos** - Show features in action
 
-**See [FEATURE_DEMO_GUIDE.md](../FEATURE_DEMO_GUIDE.md) for complete usage guide.**
-
 ## 📊 Status Badges
 
 Add these badges to your README.md to show CI status:
 
 ```markdown
-![Drupal Module Tests](https://github.com/BenTade/beta_tender/workflows/Drupal%20Module%20Tests/badge.svg)
 ![Quick Checks](https://github.com/BenTade/beta_tender/workflows/Quick%20Checks/badge.svg)
 ![Feature Demo](https://github.com/BenTade/beta_tender/workflows/Feature%20Demonstration%20with%20Visual%20Verification/badge.svg)
 ```
@@ -148,7 +91,6 @@ Add these badges to your README.md to show CI status:
 1. **Check the status badges** in the PR
 2. **Review the automated test summary** in PR comments
 3. **Download screenshots** to visually verify the changes
-4. **Check coding standard reports** for style issues
 
 ## 🔧 Local Testing
 
@@ -189,21 +131,18 @@ No secrets are required for basic testing. For advanced features:
 
 1. **Check the Actions tab** for detailed logs
 2. **Download artifacts** for full reports
-3. **Review coding standard violations** in PHPCS reports
-4. **Check installation logs** if module won't enable
+3. **Check installation logs** if module won't enable
 
 ### Common Issues:
 
 - **Coding standard violations**: Review PHPCS reports and fix formatting
 - **Module won't install**: Check dependencies in `.info.yml`
-- **Tests failing**: Verify test database configuration
 - **Screenshots missing**: Check Drupal installation succeeded
 
 ## 📚 Resources
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Drupal Coding Standards](https://www.drupal.org/docs/develop/standards)
-- [PHPUnit Testing](https://www.drupal.org/docs/testing/phpunit-in-drupal)
 - [Playwright Documentation](https://playwright.dev/)
 
 ---
