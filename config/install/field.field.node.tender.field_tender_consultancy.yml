@@ -5,13 +5,11 @@ dependencies:
     - field.storage.node.field_tender_consultancy
     - node.type.tender
     - taxonomy.vocabulary.tender_consultancy
-  module:
-    - beta_tender
 id: node.tender.field_tender_consultancy
 field_name: field_tender_consultancy
 entity_type: node
 bundle: tender
-label: 'Consultancy'
+label: Consultancy
 description: ''
 required: false
 translatable: false

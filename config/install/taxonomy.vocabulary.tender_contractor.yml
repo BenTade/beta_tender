@@ -1,9 +1,8 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - beta_tender
+dependencies: {  }
 name: 'Tender Contractor'
 vid: tender_contractor
 description: 'Contractor categories for tenders'
 weight: 0
+new_revision: false

@@ -5,13 +5,11 @@ dependencies:
     - field.storage.node.field_tender_contractor
     - node.type.tender
     - taxonomy.vocabulary.tender_contractor
-  module:
-    - beta_tender
 id: node.tender.field_tender_contractor
 field_name: field_tender_contractor
 entity_type: node
 bundle: tender
-label: 'Contractor'
+label: Contractor
 description: ''
 required: false
 translatable: false

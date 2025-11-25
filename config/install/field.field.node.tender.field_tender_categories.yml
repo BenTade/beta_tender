@@ -5,13 +5,11 @@ dependencies:
     - field.storage.node.field_tender_categories
     - node.type.tender
     - taxonomy.vocabulary.tender_categories
-  module:
-    - beta_tender
 id: node.tender.field_tender_categories
 field_name: field_tender_categories
 entity_type: node
 bundle: tender
-label: 'Categories'
+label: Categories
 description: 'Categories for classifying this tender'
 required: false
 translatable: false

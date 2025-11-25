@@ -1,9 +1,8 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - beta_tender
+dependencies: {  }
 name: 'Tender Categories'
 vid: tender_categories
 description: 'Categories for classifying tenders (e.g., Construction, IT, Services)'
 weight: 0
+new_revision: false

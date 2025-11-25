@@ -1,27 +1,24 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - node.type.tender
   module:
     - content_moderation
-    - node
-    - beta_tender
+  enforced:
+    module:
+      - beta_tender
 id: tender_proofreading
 label: 'Tender Proofreading'
 type: content_moderation
-third_party_settings: { }
 type_settings:
   entity_types:
     node:
       - tender
   states:
     draft:
-      label: 'Draft'
+      label: Draft
       weight: -20
-      published: false
-      default_revision: false
-    needs_review:
-      label: 'Needs Review'
-      weight: -10
       published: false
       default_revision: false
     in_review:
@@ -29,16 +26,21 @@ type_settings:
       weight: 0
       published: false
       default_revision: false
-    reviewed:
-      label: 'Reviewed'
-      weight: 10
+    needs_review:
+      label: 'Needs Review'
+      weight: -10
       published: false
       default_revision: false
     published:
-      label: 'Published'
+      label: Published
       weight: 20
       published: true
       default_revision: true
+    reviewed:
+      label: Reviewed
+      weight: 10
+      published: false
+      default_revision: false
   transitions:
     submit_for_review:
       label: 'Send to Review'
@@ -72,7 +74,7 @@ type_settings:
       to: in_review
       weight: 5
     publish_reviewed:
-      label: 'Publish'
+      label: Publish
       from:
         - reviewed
       to: published

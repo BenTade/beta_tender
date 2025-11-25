@@ -6,7 +6,6 @@ dependencies:
     - node.type.tender
   module:
     - text
-    - beta_tender
 id: node.tender.field_body
 field_name: field_body
 entity_type: node
@@ -23,6 +22,6 @@ default_value:
 default_value_callback: ''
 settings:
   display_summary: true
-  summary_required: true
+  required_summary: false
+  allowed_formats: {  }
 field_type: text_with_summary
-third_party_settings: { }

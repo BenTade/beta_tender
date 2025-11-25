@@ -4,16 +4,15 @@ dependencies:
   module:
     - node
     - text
-    - beta_tender
 id: node.field_body
 field_name: field_body
 entity_type: node
 type: text_with_summary
-settings: { }
+settings: {  }
 module: text
 locked: false
 cardinality: 1
 translatable: true
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

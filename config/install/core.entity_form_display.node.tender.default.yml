@@ -2,117 +2,175 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.tender.field_tender_categories
-    - field.field.node.tender.field_region
-    - field.field.node.tender.field_tender_source
-    - field.field.node.tender.field_tender_consultancy
-    - field.field.node.tender.field_tender_contractor
-    - field.field.node.tender.field_closing_date
-    - field.field.node.tender.field_opening_date
-    - field.field.node.tender.field_publish_date
-    - field.field.node.tender.field_scanned_images
     - field.field.node.tender.field_assigned_editor
     - field.field.node.tender.field_body
-    - field.field.node.tender.field_tender_announcement_number
+    - field.field.node.tender.field_closing_date
     - field.field.node.tender.field_inviter_company_name
+    - field.field.node.tender.field_opening_date
+    - field.field.node.tender.field_publish_date
+    - field.field.node.tender.field_region
+    - field.field.node.tender.field_scanned_images
+    - field.field.node.tender.field_tender_announcement_number
+    - field.field.node.tender.field_tender_categories
+    - field.field.node.tender.field_tender_consultancy
+    - field.field.node.tender.field_tender_contractor
+    - field.field.node.tender.field_tender_source
+    - image.style.thumbnail
+    - node.type.tender
   module:
-    - beta_tender
+    - content_moderation
+    - datetime
+    - path
+    - svg_image
+    - text
 id: node.tender.default
 targetEntityType: node
 bundle: tender
 mode: default
 content:
-  title:
-    type: string_textfield
-    settings: { }
-    third_party_settings: { }
+  created:
+    type: datetime_timestamp
+    weight: 10
     region: content
-    weight: -5
+    settings: {  }
+    third_party_settings: {  }
+  field_assigned_editor:
+    type: entity_reference_autocomplete
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 13
   field_body:
     type: text_textarea_with_summary
     settings:
       rows: 12
       summary_rows: 5
       placeholder: ''
-    third_party_settings: { }
+    third_party_settings: {  }
     region: content
     weight: 12
-  field_tender_categories:
-    type: options_select
-    settings: { }
-    third_party_settings: { }
+  field_closing_date:
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
     region: content
-    weight: 8
-  field_region:
-    type: options_select
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 7
-  field_tender_source:
-    type: options_select
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 3
-  field_tender_consultancy:
-    type: options_select
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 10
-  field_tender_contractor:
-    type: options_select
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 9
-  field_tender_announcement_number:
-    type: string_textfield
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 2
+    weight: 6
   field_inviter_company_name:
     type: string_textfield
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     region: content
     weight: 11
   field_opening_date:
     type: datetime_default
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     region: content
     weight: 5
-  field_closing_date:
-    type: datetime_default
-    settings: { }
-    third_party_settings: { }
-    region: content
-    weight: 6
   field_publish_date:
     type: datetime_default
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     region: content
     weight: 4
+  field_region:
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 7
   field_scanned_images:
     type: image_image
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     region: content
     weight: 1
-  field_assigned_editor:
-    type: entity_reference_autocomplete
-    settings: { }
-    third_party_settings: { }
+  field_tender_announcement_number:
+    type: string_textfield
+    settings: {  }
+    third_party_settings: {  }
     region: content
-    weight: 13
+    weight: 2
+  field_tender_categories:
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 8
+  field_tender_consultancy:
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 10
+  field_tender_contractor:
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 9
+  field_tender_source:
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: 3
   moderation_state:
     type: moderation_state_default
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     region: content
     weight: 14
-hidden: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+    weight: -5
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: '60'
+      placeholder: ''
+      match_limit: 10
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  publish_on: true
+  publish_state: true
+  unpublish_on: true
+  unpublish_state: true

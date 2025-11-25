@@ -4,7 +4,6 @@ dependencies:
   module:
     - node
     - taxonomy
-    - beta_tender
 id: node.field_tender_source
 field_name: field_tender_source
 entity_type: node

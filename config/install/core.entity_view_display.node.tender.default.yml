@@ -2,110 +2,126 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.tender.field_tender_categories
-    - field.field.node.tender.field_region
-    - field.field.node.tender.field_tender_source
-    - field.field.node.tender.field_tender_consultancy
-    - field.field.node.tender.field_tender_contractor
-    - field.field.node.tender.field_closing_date
-    - field.field.node.tender.field_opening_date
-    - field.field.node.tender.field_publish_date
-    - field.field.node.tender.field_scanned_images
     - field.field.node.tender.field_assigned_editor
     - field.field.node.tender.field_body
-    - field.field.node.tender.field_tender_announcement_number
+    - field.field.node.tender.field_closing_date
     - field.field.node.tender.field_inviter_company_name
+    - field.field.node.tender.field_opening_date
+    - field.field.node.tender.field_publish_date
+    - field.field.node.tender.field_region
+    - field.field.node.tender.field_scanned_images
+    - field.field.node.tender.field_tender_announcement_number
+    - field.field.node.tender.field_tender_categories
+    - field.field.node.tender.field_tender_consultancy
+    - field.field.node.tender.field_tender_contractor
+    - field.field.node.tender.field_tender_source
+    - node.type.tender
   module:
-    - beta_tender
+    - datetime
+    - svg_image
+    - text
+    - user
 id: node.tender.default
 targetEntityType: node
 bundle: tender
 mode: default
 content:
-  field_tender_categories:
+  field_assigned_editor:
     type: entity_reference_label
     label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 8
-  field_region:
-    type: entity_reference_label
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 7
-  field_tender_source:
-    type: entity_reference_label
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 3
-  field_tender_consultancy:
-    type: entity_reference_label
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 10
-  field_tender_contractor:
-    type: entity_reference_label
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 9
-  field_opening_date:
-    type: datetime_default
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 5
-  field_closing_date:
-    type: datetime_default
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 6
-  field_publish_date:
-    type: datetime_default
-    label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    weight: 13
+    region: content
   field_body:
     type: text_default
     label: hidden
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 12
-  field_tender_announcement_number:
-    type: string
+    region: content
+  field_closing_date:
+    type: datetime_default
     label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: { }
-    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
   field_inviter_company_name:
     type: string
     label: above
     settings:
       link_to_entity: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 11
+    region: content
+  field_opening_date:
+    type: datetime_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_publish_date:
+    type: datetime_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_region:
+    type: entity_reference_label
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
   field_scanned_images:
     type: image
     label: above
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
-  field_assigned_editor:
+    region: content
+  field_tender_announcement_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_tender_categories:
     type: entity_reference_label
     label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 13
-  moderation_state:
-    type: moderation_state_default
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_tender_consultancy:
+    type: entity_reference_label
     label: above
-    settings: { }
-    third_party_settings: { }
-    weight: 14
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_tender_contractor:
+    type: entity_reference_label
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_tender_source:
+    type: entity_reference_label
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden: {  }

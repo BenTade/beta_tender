@@ -5,7 +5,6 @@ dependencies:
     - field.storage.node.field_scanned_images
     - node.type.tender
   module:
-    - beta_tender
     - image
 id: node.tender.field_scanned_images
 field_name: field_scanned_images
@@ -20,7 +19,7 @@ default_value_callback: ''
 settings:
   handler: 'default:file'
   handler_settings: {  }
-  file_directory: 'tender/scanned'
+  file_directory: tender/scanned
   file_extensions: 'png gif jpg jpeg'
   max_filesize: '10 MB'
   max_resolution: ''

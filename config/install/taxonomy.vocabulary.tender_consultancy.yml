@@ -1,9 +1,8 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - beta_tender
+dependencies: {  }
 name: 'Tender Consultancy'
 vid: tender_consultancy
 description: 'Consultancy categories for tenders'
 weight: 0
+new_revision: false

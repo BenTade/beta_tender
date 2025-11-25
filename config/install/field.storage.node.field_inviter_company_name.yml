@@ -3,7 +3,6 @@ status: true
 dependencies:
   module:
     - node
-    - beta_tender
 id: node.field_inviter_company_name
 field_name: field_inviter_company_name
 entity_type: node
@@ -16,6 +15,6 @@ module: core
 locked: false
 cardinality: 1
 translatable: true
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

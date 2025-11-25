@@ -5,13 +5,11 @@ dependencies:
     - field.storage.node.field_region
     - node.type.tender
     - taxonomy.vocabulary.regions
-  module:
-    - beta_tender
 id: node.tender.field_region
 field_name: field_region
 entity_type: node
 bundle: tender
-label: 'Region'
+label: Region
 description: 'The geographical region for this tender'
 required: false
 translatable: false
