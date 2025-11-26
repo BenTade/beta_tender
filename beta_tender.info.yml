@@ -1,6 +1,6 @@
 name: 'Beta Tender'
 type: module
-description: 'Manages the creation of Tender content from scanned images, featuring an image processing dashboard, bulk OCR, and a proofreading workflow.'
+description: 'Manages the creation of Tender content from scanned media with OCR processing, batch tooling, and a unified tender overview.'
 core_version_requirement: ^11
 package: Content
 
@@ -15,4 +15,3 @@ dependencies:
   - drupal:text
   - drupal:user
   - drupal:content_moderation
-  - entity_share:entity_share

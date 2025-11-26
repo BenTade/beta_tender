@@ -29,7 +29,6 @@
             <th>{{ 'Created'|t }}</th>
             <th>{{ 'Last Updated'|t }}</th>
             <th>{{ 'Moderation State'|t }}</th>
-            <th>{{ 'Proofreader'|t }}</th>
             <th>{{ 'Share Status'|t }}</th>
             <th>{{ 'Actions'|t }}</th>
           </tr>
@@ -44,7 +43,6 @@
               <td>{{ tender.created }}</td>
               <td>{{ tender.changed }}</td>
               <td>{{ tender.moderation_state }}</td>
-              <td>{{ tender.editor }}</td>
               <td>{{ tender.share_status }}</td>
               <td>
                 <a href="{{ tender.edit_url }}">{{ 'Edit'|t }}</a>

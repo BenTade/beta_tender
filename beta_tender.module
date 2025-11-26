@@ -5,8 +5,8 @@
  * Main module file for Beta Tender.
  *
  * Provides functionality for managing Tender content creation from scanned
- * images, including OCR processing, proofreading workflows, and content
- * synchronization.
+ * media, including OCR processing, batch tooling, and unified tender
+ * dashboards.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -18,19 +18,19 @@ function beta_tender_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.beta_tender':
       $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Beta Tender module provides a comprehensive workflow for creating Tender content from scanned images. It includes a unified tenders dashboard, image processing, OCR integration, proofreading workflows, and content synchronization capabilities.') . '</p>';
+      $output .= '<p>' . t('The Beta Tender module streamlines the creation of Tender content from scanned media. It includes a unified tenders overview, source upload tools, OCR integration, and batch processing capabilities.') . '</p>';
       $output .= '<h3>' . t('Features') . '</h3>';
       $output .= '<dl>';
-      $output .= '<dt>' . t('Unified Tenders Dashboard') . '</dt>';
-      $output .= '<dd>' . t('View all tenders organized by dateline (source + date) in a consolidated interface. Upload scanned images with dateline information, view comprehensive tender details including author, creation dates, proofread status, and share status.') . '</dd>';
-      $output .= '<dt>' . t('Image Processing') . '</dt>';
-      $output .= '<dd>' . t('Manage and organize scanned images by date and source, with drag-and-drop functionality to group images into tenders.') . '</dd>';
+      $output .= '<dt>' . t('Unified Tenders Overview') . '</dt>';
+      $output .= '<dd>' . t('View all tenders organized by dateline (source + date) in a consolidated interface. Upload scanned media with dateline information and see author, creation dates, and moderation status at a glance.') . '</dd>';
+      $output .= '<dt>' . t('Source Upload Tools') . '</dt>';
+      $output .= '<dd>' . t('Upload and catalog scanned media with publication metadata for later OCR processing.') . '</dd>';
       $output .= '<dt>' . t('OCR Integration') . '</dt>';
       $output .= '<dd>' . t('Process images using either document_ocr or ocr_image modules to extract text from scanned documents.') . '</dd>';
-      $output .= '<dt>' . t('Proofreading Workflow') . '</dt>';
-      $output .= '<dd>' . t('Track tender status, see who is assigned to proofread each tender, and monitor progress through the dateline detail view.') . '</dd>';
-      $output .= '<dt>' . t('Content Synchronization') . '</dt>';
-      $output .= '<dd>' . t('Use Entity Share to push approved tenders to production websites.') . '</dd>';
+      $output .= '<dt>' . t('Batch Processing') . '</dt>';
+      $output .= '<dd>' . t('Use the Drupal Batch API to process large sets of uploads without timing out.') . '</dd>';
+      $output .= '<dt>' . t('Backup & Restore Helper') . '</dt>';
+      $output .= '<dd>' . t('Provides an administrative screen to expand manual export/import workflows.') . '</dd>';
       $output .= '</dl>';
       return $output;
   }

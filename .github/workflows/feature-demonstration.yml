@@ -48,8 +48,6 @@ jobs:
           cd drupal
           composer require drush/drush
           
-          # Add entity_share as a soft dependency (may not install if unavailable)
-          composer require drupal/entity_share --no-interaction || echo "Entity Share not available, continuing without it"
 
       - name: Copy module to Drupal
         run: |

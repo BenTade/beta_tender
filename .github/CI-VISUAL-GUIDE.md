@@ -33,7 +33,7 @@ This guide shows what the GitHub Actions workflows will do when testing your cod
 ```bash
 ✓ Checking src/Service/OcrService.php
 ✓ Checking src/Service/TenderCreationService.php
-✓ Checking src/Controller/DashboardController.php
+✓ Checking src/Controller/TendersController.php
 ...
 ✅ All PHP files passed syntax check
 ```

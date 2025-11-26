@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Beta Tender module is a comprehensive Drupal 11 solution for managing tender content creation from scanned images. It provides a complete workflow from image upload through OCR processing to editorial review and content synchronization.
+The Beta Tender module is a comprehensive Drupal 11 solution for managing tender content creation from scanned images. It provides a complete workflow from source upload through OCR processing to editorial review.
 
 **Module Name**: Beta Tender  
 **Machine Name**: `beta_tender`  
@@ -29,7 +29,7 @@ The Beta Tender module is a comprehensive Drupal 11 solution for managing tender
 - **Frontend**: Twig templates, jQuery, Drupal.tabledrag
 - **Storage**: Drupal entity system (nodes, media, taxonomy)
 - **Processing**: Drupal Batch API for long-running tasks
-- **Integration**: Entity Share for content synchronization
+- **Integration**: Drupal Media + Taxonomy APIs
 
 ---
 
@@ -111,36 +111,23 @@ composer.json                 - Composer package definition
 
 ### 4. Controllers (src/Controller/)
 
-#### DashboardController.php
-**Routes**: 
-- `/admin/content/tender/dashboard` - Main dashboard
-- `/admin/content/tender/dashboard/{date}/{source_id}` - Image arrangement
-
-**Features**:
-- Level 1: Date/source organization with collapsible accordions
-- Level 2: Tabledrag interface for image grouping
-- Dynamic counts and statistics
-- Responsive design
-
-#### ProofreadController.php
+#### TendersController.php
 **Routes**:
-- `/admin/content/tender/proofread` - Proofreading dashboard
-- `/admin/content/tender/proofread/assign-next` - Auto-assignment
+- `/admin/content/tender` - Unified tender overview
+- `/admin/content/tender/dateline/{source_id}/{date}` - Dateline detail view
 
 **Features**:
-- Moderation-state filtering (Needs Review, In Review, Reviewed)
-- Automatic tender assignment
-- Editor tracking
-- Redirect to edit form
+- Groups tenders by source + publish date
+- Provides pagination over datelines and tenders
+- Surfaces moderation state and timestamps
 
-#### ShareController.php
+#### BackupRestoreController.php
 **Routes**:
-- `/admin/content/tender/share` - Share dashboard
+- `/admin/content/tender/backup-restore` - Backup and restore helper
 
 **Features**:
-- Entity Share integration
-- Fallback information page
-- Installation guidance
+- Provides UI scaffolding for manual export/import operations
+- Central place to add future maintenance tooling
 
 ### 5. Forms (src/Form/)
 
@@ -188,7 +175,7 @@ composer.json                 - Composer package definition
 - `OcrServiceTest.php` - Service availability and configuration tests
 
 #### Functional Tests
-- `DashboardTest.php` - Access control and page rendering tests
+- _None currently_
 
 ---
 
@@ -208,7 +195,6 @@ composer.json                 - Composer package definition
 | field_closing_date | date | Tender closing date |
 | field_tender_categories | entity_reference (multiple) | Category terms |
 | field_region | entity_reference | Geographic region |
-| field_assigned_editor | entity_reference | Assigned user |
 | moderation_state | workflow state | Needs Review → In Review → Reviewed |
 
 ### Scanned Image Media Type (media.scanned_image)
@@ -225,48 +211,14 @@ composer.json                 - Composer package definition
 
 ## Workflow
 
-### Image Processing Workflow
+### Source Upload → Batch → Review
 
 ```
-1. Upload Images
+1. Upload source media via /admin/content/tender/upload-source
    ↓
-2. Access Dashboard → View by Date/Source
+2. Trigger batch processing (/admin/content/tender/process-batch) to run OCR and create tenders
    ↓
-3. Arrange Images → Drag-and-drop to group
-   ↓
-4. Select Groups → Check parent images
-   ↓
-5. Process Batch → OCR extraction + Tender creation
-   ↓
-6. Review Created Tenders
-```
-
-### Proofreading Workflow
-
-```
-1. View Proofreading Dashboard
-   ↓
-2. Click "Assign Next Tender"
-   ↓
-3. System assigns oldest unreviewed tender
-   ↓
-4. Editor reviews and corrects tender
-   ↓
-5. Change moderation state to "Reviewed"
-   ↓
-6. Tender ready for publication
-```
-
-### Synchronization Workflow
-
-```
-1. Navigate to Share Tenders tab
-   ↓
-2. Select reviewed tenders
-   ↓
-3. Push to production via Entity Share
-   ↓
-4. Monitor sync status
+3. Review and edit tenders through the unified overview + dateline detail pages
 ```
 
 ---
@@ -276,24 +228,21 @@ composer.json                 - Composer package definition
 | Permission | Description | Typical Role |
 |------------|-------------|--------------|
 | administer beta tender | Full module configuration | Administrator |
-| access tender dashboard | View processing dashboard | Content Manager |
-| process tender images | Upload and process images | Content Manager |
-| proofread tenders | Review and edit tenders | Editor |
-| assign tenders | Assign tenders to editors | Content Manager |
-| share tenders | Sync to production | Publisher |
+| access tender dashboard | Access the unified tenders overview | Content Manager |
+| process tender images | Upload source media and trigger batch processing | Content Manager |
 
 ---
 
 ## Routes
 
-| Path | Controller | Purpose |
-|------|------------|---------|
+| Path | Controller/Form | Purpose |
+|------|----------------|---------|
 | /admin/config/beta_tender | BetaTenderSettingsForm | Module settings |
-| /admin/content/tender/dashboard | DashboardController::mainDashboard | Level 1 dashboard |
-| /admin/content/tender/dashboard/{date}/{source_id} | DashboardController::imageArrangement | Level 2 arrangement |
-| /admin/content/tender/proofread | ProofreadController::proofreadDashboard | Proofreading interface |
-| /admin/content/tender/proofread/assign-next | ProofreadController::assignNextTender | Auto-assignment |
-| /admin/content/tender/share | ShareController::shareDashboard | Share interface |
+| /admin/content/tender/process-batch | ProcessTenderBatchForm | Run OCR batch jobs |
+| /admin/content/tender | TendersController::mainPage | Tenders overview |
+| /admin/content/tender/dateline/{source_id}/{date} | TendersController::datelineDetail | Dateline detail view |
+| /admin/content/tender/backup-restore | BackupRestoreController::content | Backup and restore helper |
+| /admin/content/tender/upload-source | UploadSourceForm | Upload and catalog source media |
 
 ---
 
@@ -303,7 +252,7 @@ composer.json                 - Composer package definition
 - node, file, image, datetime, options, taxonomy, media, text, user
 
 ### Required Contributed Modules
-- entity_share (for synchronization)
+- None
 
 ### Optional Modules (Choose One)
 - document_ocr (OCR processing)
@@ -313,10 +262,10 @@ composer.json                 - Composer package definition
 
 ## Key Features Implementation
 
-### 1. Multi-Level Dashboard
-- **Level 1**: Collapsible date/source organization with dynamic counts
-- **Level 2**: Tabledrag interface with parent-child relationships
-- **Navigation**: Seamless linking between levels
+### 1. Unified Tender Overview
+- **Dateline Grouping**: Presents tenders grouped by source + publish date
+- **Actionable Data**: Surfaces moderation state and timestamps
+- **Navigation**: Direct linking between overview and dateline detail routes
 
 ### 2. OCR Integration
 - **Adapter Pattern**: Configurable backend selection
@@ -328,20 +277,14 @@ composer.json                 - Composer package definition
 - **Progress Tracking**: Real-time feedback to users
 - **Error Recovery**: Continues processing despite individual failures
 
-### 4. Tabledrag Implementation
-- **Core Integration**: Uses Drupal's native tabledrag library
-- **Hierarchical**: Supports parent-child image relationships
-- **Visual Feedback**: Clear indentation and drag handles
+### 4. Source Upload Pipeline
+- **Managed Files**: Upload and catalog source media for later processing
+- **Media Metadata**: Captures publish date + source taxonomy information
+- **Organization**: Automatically groups uploads by folder/date
 
-### 5. Editorial Workflow
-- **Status Tracking**: Three-state content moderation workflow (Needs Review → In Review → Reviewed)
-- **Assignment System**: Automatic assignment to current user
-- **Editor Tracking**: Links tenders to specific users
-
-### 6. Content Synchronization
-- **Entity Share Integration**: Leverages proven contrib module
-- **Fallback UI**: Informative page when Entity Share not available
-- **Status Monitoring**: Real-time sync status tracking
+### 5. Backup & Restore Helper
+- **Administrative UI**: Centralized screen for export/import tooling
+- **Extensible**: Placeholder controller to expand maintenance utilities
 
 ---
 
@@ -361,7 +304,7 @@ The module is designed for easy extension:
 ## Performance Considerations
 
 - **Batch Processing**: Handles large image sets without timeout
-- **Lazy Loading**: Images loaded on-demand in arrangement interface
+- **Lazy Loading**: Media entities loaded on-demand when building listings
 - **Caching**: Leverages Drupal's cache system
 - **Database Optimization**: Efficient queries with proper indexing
 - **Asset Aggregation**: CSS/JS properly defined in libraries

@@ -1,6 +1,6 @@
 {
   "name": "drupal/beta_tender",
-  "description": "Manages the creation of Tender content from scanned images, featuring an image processing dashboard, bulk OCR, and a proofreading workflow.",
+  "description": "Manages the creation of Tender content from scanned media with OCR processing, batching, and a unified tender overview.",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
   "keywords": ["Drupal", "tender", "OCR", "image processing", "batch"],

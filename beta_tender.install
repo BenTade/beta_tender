@@ -136,15 +136,6 @@ function beta_tender_requirements($phase) {
       }
     }
     
-    // Check for entity_share module.
-    if (!\Drupal::moduleHandler()->moduleExists('entity_share')) {
-      $requirements['beta_tender_entity_share'] = [
-        'title' => t('Beta Tender Entity Share'),
-        'value' => t('Not installed'),
-        'severity' => REQUIREMENT_WARNING,
-        'description' => t('The Entity Share module is required for content synchronization features. Please install and enable it.'),
-      ];
-    }
   }
   
   return $requirements;

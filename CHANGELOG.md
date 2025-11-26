@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OCR integration with configurable backend (document_ocr or ocr_image)
 - Batch processing for creating tenders from image groups
 - Proofreading dashboard with status filtering
-- Automatic tender assignment workflow
 - Entity Share integration for content synchronization
 - Tender content type with comprehensive field structure
 - Scanned Image media type
@@ -30,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Image Management**: Upload and organize scanned images by date and source
 - **OCR Processing**: Extract text from images with batch processing
 - **Drag-and-Drop**: Group multiple images into single tenders
-- **Editorial Workflow**: Track proofreading status and assignments
+- **Editorial Workflow**: Track proofreading status via moderation states
 - **Content Sync**: Push approved tenders to production sites
 
 ### Technical Details
@@ -48,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dateline detail view showing comprehensive tender information:
   - Author information
   - Created and last updated timestamps
-  - Proofread status with assigned editor
+  - Moderation status indicators
   - Share/sync status
 - New TendersController with mainPage() and datelineDetail() methods
 - New templates: tender-main-page.html.twig and tender-dateline-detail.html.twig

@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.tender.field_opening_date
     - field.field.node.tender.field_publish_date
     - field.field.node.tender.field_region
+    - field.field.node.tender.field_scanned_images
     - field.field.node.tender.field_tender_announcement_number
     - field.field.node.tender.field_tender_categories
     - field.field.node.tender.field_tender_consultancy
@@ -74,6 +75,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 7
+    region: content
+  field_scanned_images:
+    type: image
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
     region: content
   field_tender_announcement_number:
     type: string

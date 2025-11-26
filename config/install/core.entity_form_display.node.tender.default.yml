@@ -86,6 +86,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_scanned_images:
+    type: image_image
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_source_media:
     type: media_library_widget
     weight: 2

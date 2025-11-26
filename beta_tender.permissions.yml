@@ -5,20 +5,8 @@
 
 'access tender dashboard':
   title: 'Access Tender Dashboard'
-  description: 'Access the image processing dashboard'
+  description: 'Access the unified tenders overview'
 
 'process tender images':
   title: 'Process Tender Images'
-  description: 'Upload and process scanned images for tenders'
-
-'proofread tenders':
-  title: 'Proofread Tenders'
-  description: 'Access proofreading dashboard and review tenders'
-
-'assign tenders':
-  title: 'Assign Tenders'
-  description: 'Assign tenders to editors for proofreading'
-
-'share tenders':
-  title: 'Share Tenders'
-  description: 'Synchronize tenders to production site using Entity Share'
+  description: 'Upload source media and run batch processing'

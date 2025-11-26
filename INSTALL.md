@@ -24,12 +24,12 @@ The following core modules are required and will be automatically enabled:
 - text
 - user
 
-### Required Contributed Modules
-- **entity_share** - For content synchronization features
-  ```bash
-  composer require drupal/entity_share
-  drush en entity_share entity_share_client
-  ```
+### Optional Contributed Modules
+- **entity_share** - Install only if you plan to add content synchronization features
+   ```bash
+   composer require drupal/entity_share
+   drush en entity_share entity_share_client
+   ```
 
 ### OCR Backend (Choose One)
 You must install at least one of these OCR modules:
@@ -73,7 +73,7 @@ Using the Drupal UI:
 If not already installed, enable required contributed modules:
 
 ```bash
-# Install and enable Entity Share
+# (Optional) Install Entity Share if you plan to sync content
 composer require drupal/entity_share
 drush en entity_share entity_share_client -y
 
@@ -123,17 +123,16 @@ Navigate to **People > Permissions** (`/admin/people/permissions`) and assign ap
 #### Content Manager Role
 - ✓ Access Tender Dashboard
 - ✓ Process Tender Images
-- ✓ Proofread Tenders
-- ✓ Assign Tenders
 - ✓ Create and edit tender content
-- ✓ Create and edit scanned image media
+- ✓ Create and edit source media
 
 #### Administrator Role
-- ✓ All Beta Tender permissions
 - ✓ Administer Beta Tender
+- ✓ Access Tender Dashboard
+- ✓ Process Tender Images
 
 #### Editor Role
-- ✓ Proofread Tenders
+- ✓ Access Tender Dashboard (optional, view-only)
 - ✓ Edit tender content
 
 Example Drush commands:

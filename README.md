@@ -10,14 +10,12 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 
 ## Features
 
-- **Unified Tenders Dashboard**: Consolidated view of all tenders organized by dateline (source + date)
-- **Upload with Dateline**: Upload scanned images with source and date information
+- **Unified Tenders Overview**: Consolidated view of all tenders organized by dateline (source + date)
+- **Source Upload with Dateline**: Upload scanned media with source and publication date metadata
 - **OCR Integration**: Extract text from images using configurable OCR backends (document_ocr or ocr_image)
-- **Drag-and-Drop Image Arrangement**: Group multiple images into single tenders using Drupal's tabledrag
 - **Batch Processing**: Process multiple tender groups with OCR using Drupal's Batch API
-- **Comprehensive Tender Tracking**: View author, creation date, last update, moderation state, and share status
-- **Proofreading Workflow**: Assign tenders to editors for review with status tracking
-- **Content Synchronization**: Integration with Entity Share for pushing content to production
+- **Comprehensive Tender Tracking**: View author, creation date, last update, and moderation state indicators
+- **Backup & Restore Helper**: Dedicated admin screen for manual export/import utilities
 
 ## Requirements
 
@@ -26,15 +24,13 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 - One of the following OCR modules:
   - document_ocr
   - ocr_image
-- Entity Share module (for content synchronization features)
 
 ## Installation
 
 1. Place this module in your Drupal installation's `modules/custom` directory
-2. Install the required dependencies (Entity Share module)
-3. Install one of the OCR modules (document_ocr or ocr_image)
-4. Enable the Beta Tender module: `drush en beta_tender`
-5. Configure the OCR backend at `/admin/config/beta_tender`
+2. Install one of the OCR modules (document_ocr or ocr_image)
+3. Enable the Beta Tender module: `drush en beta_tender`
+4. Configure the OCR backend at `/admin/config/beta_tender`
 
 ## Configuration
 
@@ -49,11 +45,8 @@ A comprehensive Drupal 11 module for managing the creation of Tender content fro
 Assign the following permissions to appropriate roles:
 
 - **Administer Beta Tender**: Configure module settings
-- **Access Tender Dashboard**: View the image processing dashboard
-- **Process Tender Images**: Upload and process scanned images
-- **Proofread Tenders**: Access proofreading dashboard and review tenders
-- **Assign Tenders**: Assign tenders to editors
-- **Share Tenders**: Synchronize tenders to production site
+- **Access Tender Dashboard**: Access the unified tenders overview
+- **Process Tender Images**: Upload source media and run batch processing
 
 ## Usage
 
@@ -77,26 +70,25 @@ Assign the following permissions to appropriate roles:
 
 4. **View Dateline Details**:
    - Click "View Tenders" to see all tenders for a specific dateline
-   - View comprehensive information for each tender:
-     - Title and link to full tender
-     - Author who created the tender
-     - Created date and time
-     - Last updated date and time
-   - Moderation state (Needs Review, In Review, Reviewed)
-     - Assigned proofreader
-     - Share/sync status
+    - View comprehensive information for each tender:
+       - Title and link to full tender
+       - Author who created the tender
+       - Created date and time
+       - Last updated date and time
+       - Moderation state (Needs Review, In Review, Reviewed)
+       - Share/sync status
 
-### Image Processing Workflow
+### Source Upload & Batch Processing
 
-1. **Arrange Images**:
-   - Access the image arrangement page for unprocessed images
-   - Use drag-and-drop to group related images
-   - Indent images under a parent to create multi-image tenders
+1. **Upload Source Media**:
+   - Navigate to **Content > Tender > Upload Source**
+   - Upload images or PDFs, tagging each upload with its source and publish date
+   - Files are saved as media entities for later processing
 
 2. **Process with OCR**:
-   - Select parent images (tender groups) using checkboxes
-   - Click "Process OCR and Create Tenders"
-   - The batch process will extract text and create tender nodes
+   - Visit **Content > Tender > Process Tender Batch**
+   - Select the media groups you want to process
+   - Run the batch to extract text and create draft tender nodes
 
 ### Proofreading Workflow
 
@@ -108,7 +100,6 @@ Assign the following permissions to appropriate roles:
 
 2. **Track Progress**:
    - View moderation state badges in the dateline detail view
-   - See who is assigned to proofread each tender
    - Monitor share/sync status for published tenders
 
 ## Content Types and Fields
@@ -116,7 +107,7 @@ Assign the following permissions to appropriate roles:
 ### Tender Content Type
 
 - **Title**: Auto-generated from OCR text
-- **Scanned Images**: Multiple image files
+- **Source Media**: Media references to uploaded images/documents
 - **Tender Announcement Number**: Plain text identifier from the publication
 - **Source**: Reference to tender source taxonomy
 - **Publish Date**: Date-only field representing the print/announce date
@@ -128,7 +119,6 @@ Assign the following permissions to appropriate roles:
 - **Tender Consultancy**: Consultancy taxonomy selection
 - **Inviter Company Name**: Plain text organization label
 - **Tender Body**: Rich text with required summary (stores OCR output)
-- **Assigned Editor**: User reference for proofreading ownership
 - **Content Moderation**: Custom "Tender Proofreading" workflow (Needs Review, In Review, Reviewed)
 
 ### Scanned Image Media Type
@@ -154,8 +144,8 @@ Assign the following permissions to appropriate roles:
 
 ### Controllers
 
-- **DashboardController**: Main and image arrangement dashboards
-- **ProofreadController**: Proofreading dashboard and assignment
+- **TendersController**: Unified tender listing and dateline detail pages
+- **BackupRestoreController**: Simple export/import helper for tenders
 
 ### Forms
 

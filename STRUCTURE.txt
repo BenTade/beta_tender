@@ -15,7 +15,7 @@ Root Directory:
 ├── beta_tender.install                 # Install/uninstall hooks
 ├── beta_tender.routing.yml             # Route definitions (6 routes)
 ├── beta_tender.services.yml            # Service container (3 services)
-├── beta_tender.permissions.yml         # Permission definitions (6 permissions)
+├── beta_tender.permissions.yml         # Permission definitions (3 permissions)
 ├── beta_tender.links.task.yml          # Local task tabs (4 tabs)
 ├── beta_tender.links.menu.yml          # Admin menu links
 ├── beta_tender.libraries.yml           # Asset libraries (3 libraries)
@@ -38,9 +38,8 @@ Root Directory:
 │   │   └── TenderBatchService.php      # Batch processing (172 lines)
 │   │
 │   ├── Controller/
-│   │   ├── DashboardController.php     # Dashboard views (282 lines)
-│   │   ├── ProofreadController.php     # Proofreading UI (182 lines)
-│   │   └── ShareController.php         # Share interface (94 lines)
+│   │   ├── BackupRestoreController.php # Backup/restore UI (24 lines)
+│   │   └── TendersController.php       # Unified tender listing (363 lines)
 │   │
 │   └── Form/
 │       ├── BetaTenderSettingsForm.php  # Settings form (85 lines)
@@ -66,8 +65,7 @@ Root Directory:
     └── src/
         ├── Kernel/
         │   └── OcrServiceTest.php      # Service tests
-        └── Functional/
-            └── DashboardTest.php       # UI tests
+        └── Functional/                 # Reserved for future UI tests
 
 Key Components Summary:
 ======================
@@ -77,10 +75,9 @@ Services (3):
 - TenderCreationService: Creates tenders from images
 - TenderBatchService: Batch processing orchestration
 
-Controllers (3):
-- DashboardController: Multi-level dashboard
-- ProofreadController: Editorial workflow
-- ShareController: Content synchronization
+Controllers (2):
+- TendersController: Unified dateline overview + detail pages
+- BackupRestoreController: Export/import helper UI
 
 Forms (3):
 - BetaTenderSettingsForm: Module configuration
@@ -97,20 +94,17 @@ Taxonomies (3):
 - Tender Sources: Publication sources
 
 Routes (6):
-1. /admin/config/beta_tender - Settings
-2. /admin/content/tender/dashboard - Main dashboard
-3. /admin/content/tender/dashboard/{date}/{source_id} - Image arrangement
-4. /admin/content/tender/proofread - Proofreading dashboard
-5. /admin/content/tender/proofread/assign-next - Auto-assignment
-6. /admin/content/tender/share - Share interface
+1. /admin/config/beta_tender - Settings form
+2. /admin/content/tender/process-batch - Batch processing form
+3. /admin/content/tender - Tenders overview
+4. /admin/content/tender/dateline/{source_id}/{date} - Dateline detail
+5. /admin/content/tender/backup-restore - Backup and restore UI
+6. /admin/content/tender/upload-source - Source upload form
 
-Permissions (6):
+Permissions (3):
 - administer beta tender
 - access tender dashboard
 - process tender images
-- proofread tenders
-- assign tenders
-- share tenders
 
 Documentation (5 files):
 - README.md: User guide

@@ -290,15 +290,6 @@ class TendersController extends ControllerBase {
         $author_name = $tender->getOwner()->getDisplayName();
       }
       
-      // Get assigned editor (proofreader).
-      $editor_name = $this->t('Unassigned');
-      if ($tender->hasField('field_assigned_editor') && !$tender->get('field_assigned_editor')->isEmpty()) {
-        $editor = $tender->get('field_assigned_editor')->entity;
-        if ($editor) {
-          $editor_name = $editor->getDisplayName();
-        }
-      }
-      
       // Resolve moderation state label to show accurate workflow status.
       $moderation_label = (string) $this->t('Unknown');
       if ($tender->hasField('moderation_state') && !$tender->get('moderation_state')->isEmpty()) {
@@ -318,7 +309,6 @@ class TendersController extends ControllerBase {
         'created' => $this->dateFormatter->format($tender->getCreatedTime(), 'short'),
         'changed' => $this->dateFormatter->format($tender->getChangedTime(), 'short'),
         'moderation_state' => $moderation_label,
-        'editor' => $editor_name,
         'share_status' => $share_status,
       ];
     }
