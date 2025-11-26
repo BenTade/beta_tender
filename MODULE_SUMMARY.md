@@ -73,28 +73,18 @@ composer.json                 - Composer package definition
 
 ### 3. Services (src/Service/)
 
-#### OcrService.php
-**Purpose**: OCR backend adapter  
-**Methods**:
-- `extractText(FileInterface $file): string` - Extract text from image
-- `isAvailable(): bool` - Check if OCR is configured
-
-**Features**:
-- Supports document_ocr and ocr_image backends
-- Configurable through admin UI
-- Comprehensive error logging
-
 #### TenderCreationService.php
-**Purpose**: Create tender nodes from image groups  
+**Purpose**: Create tender nodes from uploaded media groups  
 **Methods**:
 - `createTenderFromImages(array $media_entities): ?NodeInterface` - Main creation method
-- `parseTenderData(string $text): array` - Extract structured data from OCR text
-- `extractTitle()`, `extractOpeningDate()`, `extractClosingDate()` - Text parsing helpers
+- `buildTitle(array $media_entities): string` - Title helper based on media labels
+- `buildPlaceholderBody(array $media_entities): string` - Default body content generator
+- `buildSummary(string $text): string` - Generates the required field summary
 
 **Features**:
-- Intelligent text parsing for date extraction
-- Automatic title generation
-- Field population from OCR text
+- Automatic title + body placeholders seeded from media metadata
+- Ensures source media references are attached to the tender node
+- Creates unpublished drafts for proofreading
 - Multi-image processing
 
 #### TenderBatchService.php
@@ -151,13 +141,6 @@ composer.json                 - Composer package definition
 - Media library integration
 - Validation for duplicate uploads
 
-#### UploadScannedImagesForm.php
-**Purpose**: Inline upload form on the tenders dashboard  
-**Features**:
-- Quick add on main dashboard
-- Dateline metadata inputs
-- Immediate grouping with existing tenders
-
 ### 6. Frontend Assets
 
 #### Templates (templates/)
@@ -172,11 +155,8 @@ composer.json                 - Composer package definition
 
 ### 7. Tests (tests/src/)
 
-#### Kernel Tests
-- `OcrServiceTest.php` - Service availability and configuration tests
-
 #### Functional Tests
-- _None currently_
+- `TendersPageTest.php` - Basic dashboard regression test
 
 ---
 
@@ -186,8 +166,8 @@ composer.json                 - Composer package definition
 
 | Field | Type | Description |
 |-------|------|-------------|
-| title | string | Auto-generated from OCR text |
-| field_body | text_with_summary | OCR-derived tender body with required summary |
+| title | string | Auto-generated from media labels |
+| field_body | text_with_summary | Placeholder body awaiting manual copy |
 | field_source_media | entity_reference (media, multiple) | Linked source media (images/documents) |
 | field_tender_source | entity_reference | Source publication |
 | field_tender_announcement_number | string | Publication's announcement or tender number |
@@ -217,7 +197,7 @@ composer.json                 - Composer package definition
 ```
 1. Upload source media via /admin/content/tender/upload-source
    ↓
-2. Trigger batch processing (/admin/content/tender/process-batch) to run OCR and create tenders
+2. Trigger batch processing (/admin/content/tender/process-batch) to create draft tenders from uploaded media
    ↓
 3. Review and edit tenders through the unified overview + dateline detail pages
 ```
@@ -255,9 +235,8 @@ composer.json                 - Composer package definition
 ### Required Contributed Modules
 - None
 
-### Optional Modules (Choose One)
-- document_ocr (OCR processing)
-- ocr_image (OCR processing)
+### Optional Modules
+- None
 
 ---
 
@@ -268,22 +247,17 @@ composer.json                 - Composer package definition
 - **Actionable Data**: Surfaces moderation state and timestamps
 - **Navigation**: Direct linking between overview and dateline detail routes
 
-### 2. OCR Integration
-- **Adapter Pattern**: Configurable backend selection
-- **Error Handling**: Comprehensive logging and fallbacks
-- **Text Parsing**: Intelligent date and field extraction
-
-### 3. Batch Processing
+### 2. Batch Processing
 - **Drupal Batch API**: Prevents timeouts on large datasets
 - **Progress Tracking**: Real-time feedback to users
 - **Error Recovery**: Continues processing despite individual failures
 
-### 4. Source Upload Pipeline
+### 3. Source Upload Pipeline
 - **Managed Files**: Upload and catalog source media for later processing
 - **Media Metadata**: Captures publish date + source taxonomy information
 - **Organization**: Automatically groups uploads by folder/date
 
-### 5. Backup & Restore Helper
+### 4. Backup & Restore Helper
 - **Administrative UI**: Centralized screen for export/import tooling
 - **Extensible**: Placeholder controller to expand maintenance utilities
 
@@ -293,12 +267,11 @@ composer.json                 - Composer package definition
 
 The module is designed for easy extension:
 
-1. **Custom OCR Backends**: Add new backends by extending OcrService
-2. **Additional Fields**: Use standard Drupal field API
-3. **Custom Parsing**: Override TenderCreationService::parseTenderData()
-4. **Alternative UIs**: Services are decoupled from controllers
-5. **REST Endpoints**: Services can be exposed via REST or JSON:API
-6. **Drush Commands**: Create custom commands using services
+1. **Additional Fields**: Use standard Drupal field API
+2. **Custom Placeholder Logic**: Extend TenderCreationService to modify body/title generation
+3. **Alternative UIs**: Services are decoupled from controllers
+4. **REST Endpoints**: Services can be exposed via REST or JSON:API
+5. **Drush Commands**: Create custom commands using services
 
 ---
 

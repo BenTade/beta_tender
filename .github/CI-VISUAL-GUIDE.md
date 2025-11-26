@@ -31,8 +31,8 @@ This guide shows what the GitHub Actions workflows will do when testing your cod
 ### 1. PHP Syntax Check ✅
 
 ```bash
-✓ Checking src/Service/OcrService.php
 ✓ Checking src/Service/TenderCreationService.php
+✓ Checking src/Service/TenderBatchService.php
 ✓ Checking src/Controller/TendersController.php
 ...
 ✅ All PHP files passed syntax check
@@ -45,11 +45,10 @@ This guide shows what the GitHub Actions workflows will do when testing your cod
 ### 2. Drupal Coding Standards 📋
 
 ```
-FILE: src/Service/OcrService.php
+FILE: src/Service/TenderCreationService.php
 ────────────────────────────────────────────────────
-FOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES
+FOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE
 ────────────────────────────────────────────────────
- 45 | WARNING | Line exceeds 80 characters
  67 | WARNING | Missing function comment
 ────────────────────────────────────────────────────
 ```
@@ -95,8 +94,7 @@ Module 'beta_tender' has been enabled.
 
 ```
 Beta Tender (Drupal\Tests\beta_tender\Kernel)
- ✓ OCR service exists
- ✓ OCR availability check
+ ✓ Tender creation service wiring
 
 Beta Tender (Drupal\Tests\beta_tender\Functional)
  ✓ Dashboard access control
@@ -157,23 +155,7 @@ OK (4 tests, 8 assertions)
    └─────────────────────────────────────────┘
    ```
 
-4. **04-module-config.png**
-   ```
-   ┌─────────────────────────────────────────┐
-   │  Beta Tender Settings                   │
-   │  ┌────────────────────────────────────┐ │
-   │  │ OCR Backend:                       │ │
-   │  │ ○ Document OCR                     │ │
-   │  │ ● OCR Image                        │ │
-   │  │                                    │ │
-   │  │ [Save configuration]               │ │
-   │  └────────────────────────────────────┘ │
-   │                                         │
-   │  Shows: Configuration page works        │
-   └─────────────────────────────────────────┘
-   ```
-
-5. **05-content-types.png**
+4. **04-content-types.png**
    ```
    ┌─────────────────────────────────────────┐
    │  Content Types                          │
@@ -189,7 +171,7 @@ OK (4 tests, 8 assertions)
 
 **Purpose**: Visual proof that UI works correctly
 **Time**: ~3-5 minutes
-**Generates**: 5+ PNG screenshots (downloadable)
+**Generates**: 4+ PNG screenshots (downloadable)
 **Best for**: Reviewers to see actual UI
 
 ### 7. Test Summary 📊

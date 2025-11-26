@@ -44,7 +44,6 @@ function beta_tender_theme() {
     'tender_main_page' => [
       'variables' => [
         'datelines' => [],
-        'upload_form' => NULL,
       ],
     ],
     'tender_dateline_detail' => [

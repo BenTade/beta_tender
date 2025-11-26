@@ -100,9 +100,6 @@ class TendersController extends ControllerBase {
       ],
     ];
 
-    // Add upload form at the top.
-    $build['upload_form'] = $this->formBuilder()->getForm('Drupal\beta_tender\Form\UploadScannedImagesForm');
-
     // Query all tenders.
     $node_storage = $this->entityTypeManager->getStorage('node');
     $query = $node_storage->getQuery()

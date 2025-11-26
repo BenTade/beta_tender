@@ -138,8 +138,7 @@ Assign the following permissions to appropriate roles:
 
 ### Services
 
-- **OcrService**: Adapter for OCR backends (document_ocr or ocr_image)
-- **TenderCreationService**: Creates tender nodes from image groups
+- **TenderCreationService**: Creates tender nodes from uploaded media groups
 - **TenderBatchService**: Manages batch processing operations
 
 ### Controllers
@@ -152,7 +151,6 @@ Assign the following permissions to appropriate roles:
 - **BetaTenderSettingsForm**: Module configuration
 - **ProcessTenderBatchForm**: Batch processing form
 - **UploadSourceForm**: Source media upload tool
-- **UploadScannedImagesForm**: Inline upload on the tenders dashboard
 
 ## Development
 

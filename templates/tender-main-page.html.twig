@@ -5,18 +5,10 @@
  *
  * Available variables:
  * - datelines: Array of dateline objects grouped by source.
- * - upload_form: The file upload form.
  */
 #}
 <div class="tender-main-page">
   <h2>{{ 'Tenders'|t }}</h2>
-  
-  {% if upload_form %}
-    <div class="tender-upload-section">
-      <h3>{{ 'Upload Files'|t }}</h3>
-      {{ upload_form }}
-    </div>
-  {% endif %}
   
   {% if datelines is empty %}
     <p>{{ 'No tenders have been created yet.'|t }}</p>
