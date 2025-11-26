@@ -1,5 +1,23 @@
 beta_tender.tender_tab:
   route_name: beta_tender.tenders
-  title: 'Tender'
+  title: 'Tenders'
   base_route: system.admin_content
   weight: 10
+
+beta_tender.tenders_overview:
+  route_name: beta_tender.tenders
+  title: 'Overview'
+  parent_id: beta_tender.tender_tab
+  weight: 0
+
+beta_tender.backup_restore_tab:
+  route_name: beta_tender.backup_restore
+  title: 'Backup and Restore'
+  parent_id: beta_tender.tender_tab
+  weight: 10
+
+beta_tender.upload_source_tab:
+  route_name: beta_tender.upload_source
+  title: 'Upload Source'
+  parent_id: beta_tender.tender_tab
+  weight: 20

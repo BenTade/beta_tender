@@ -74,3 +74,19 @@ beta_tender.dateline_detail:
     _title: 'Dateline Detail'
   requirements:
     _permission: 'access tender dashboard'
+
+beta_tender.backup_restore:
+  path: '/admin/content/tender/backup-restore'
+  defaults:
+    _controller: '\Drupal\beta_tender\Controller\BackupRestoreController::content'
+    _title: 'Backup and Restore'
+  requirements:
+    _permission: 'access tender dashboard'
+
+beta_tender.upload_source:
+  path: '/admin/content/tender/upload-source'
+  defaults:
+    _form: '\Drupal\beta_tender\Form\UploadSourceForm'
+    _title: 'Upload Source'
+  requirements:
+    _permission: 'access tender dashboard'

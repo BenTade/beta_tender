@@ -9,19 +9,19 @@ dependencies:
     - field.field.node.tender.field_opening_date
     - field.field.node.tender.field_publish_date
     - field.field.node.tender.field_region
-    - field.field.node.tender.field_scanned_images
+    - field.field.node.tender.field_source_media
     - field.field.node.tender.field_tender_announcement_number
     - field.field.node.tender.field_tender_categories
     - field.field.node.tender.field_tender_consultancy
     - field.field.node.tender.field_tender_contractor
     - field.field.node.tender.field_tender_source
-    - image.style.thumbnail
     - node.type.tender
+    - workflows.workflow.tender_proofreading
   module:
     - content_moderation
     - datetime
+    - media_library
     - path
-    - svg_image
     - text
 id: node.tender.default
 targetEntityType: node
@@ -30,145 +30,163 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   field_assigned_editor:
     type: entity_reference_autocomplete
-    settings: {  }
-    third_party_settings: {  }
+    weight: 15
     region: content
-    weight: 13
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_body:
     type: text_textarea_with_summary
+    weight: 14
+    region: content
     settings:
       rows: 12
       summary_rows: 5
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
-    region: content
-    weight: 12
   field_closing_date:
     type: datetime_default
+    weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 6
   field_inviter_company_name:
     type: string_textfield
-    settings: {  }
-    third_party_settings: {  }
+    weight: 13
     region: content
-    weight: 11
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_opening_date:
     type: datetime_default
+    weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 5
   field_publish_date:
     type: datetime_default
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 4
   field_region:
     type: options_select
+    weight: 8
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 7
   field_scanned_images:
     type: image_image
+    weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
+  field_source_media:
+    type: media_library_widget
+    weight: 2
     region: content
-    weight: 1
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_tender_announcement_number:
     type: string_textfield
-    settings: {  }
-    third_party_settings: {  }
+    weight: 1
     region: content
-    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_tender_categories:
     type: options_select
+    weight: 9
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 8
   field_tender_consultancy:
     type: options_select
+    weight: 12
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 10
   field_tender_contractor:
     type: options_select
+    weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 9
   field_tender_source:
     type: options_select
+    weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 3
   moderation_state:
     type: moderation_state_default
+    weight: 16
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-    weight: 14
   path:
     type: path
-    weight: 30
+    weight: 19
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
+    weight: 17
+    region: content
     settings:
       display_label: true
-    weight: 15
-    region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 21
+    region: content
     settings:
       display_label: true
-    weight: 120
-    region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
+    weight: 18
+    region: content
     settings:
       display_label: true
-    weight: 16
-    region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    settings: {  }
-    third_party_settings: {  }
+    weight: 0
     region: content
-    weight: -5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
-      size: '60'
-      placeholder: ''
       match_limit: 10
-    region: content
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   publish_on: true
   publish_state: true
