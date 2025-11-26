@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.tender.field_assigned_editor
     - field.field.node.tender.field_body
     - field.field.node.tender.field_closing_date
     - field.field.node.tender.field_inviter_company_name
@@ -33,16 +32,6 @@ content:
     weight: 11
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_assigned_editor:
-    type: entity_reference_autocomplete
-    weight: 15
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_body:
     type: text_textarea_with_summary

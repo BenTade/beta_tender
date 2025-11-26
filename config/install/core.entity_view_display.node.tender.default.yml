@@ -2,14 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.tender.field_assigned_editor
     - field.field.node.tender.field_body
     - field.field.node.tender.field_closing_date
     - field.field.node.tender.field_inviter_company_name
     - field.field.node.tender.field_opening_date
     - field.field.node.tender.field_publish_date
     - field.field.node.tender.field_region
-    - field.field.node.tender.field_scanned_images
+    - field.field.node.tender.field_source_media
     - field.field.node.tender.field_tender_announcement_number
     - field.field.node.tender.field_tender_categories
     - field.field.node.tender.field_tender_consultancy
