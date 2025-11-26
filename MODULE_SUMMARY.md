@@ -137,14 +137,6 @@ composer.json                 - Composer package definition
 - OCR backend selection (document_ocr or ocr_image)
 - Backend-specific configuration options
 
-#### ImageArrangementForm.php
-**Purpose**: Tabledrag interface for grouping images  
-**Features**:
-- Multi-level drag-and-drop
-- Parent-child relationships
-- Bulk selection
-- Weight ordering
-
 #### ProcessTenderBatchForm.php
 **Purpose**: Batch processing trigger  
 **Features**:
@@ -152,12 +144,25 @@ composer.json                 - Composer package definition
 - Batch initialization
 - Status feedback
 
+#### UploadSourceForm.php
+**Purpose**: Standalone source uploader  
+**Features**:
+- Source + publish date metadata capture
+- Media library integration
+- Validation for duplicate uploads
+
+#### UploadScannedImagesForm.php
+**Purpose**: Inline upload form on the tenders dashboard  
+**Features**:
+- Quick add on main dashboard
+- Dateline metadata inputs
+- Immediate grouping with existing tenders
+
 ### 6. Frontend Assets
 
 #### Templates (templates/)
-- `tender-dashboard.html.twig` - Main dashboard view
-- `tender-image-arrangement.html.twig` - Image arrangement page
-- `tender-proofread-dashboard.html.twig` - Proofreading interface
+- `tender-main-page.html.twig` - Unified tenders overview
+- `tender-dateline-detail.html.twig` - Dateline detail view
 
 #### CSS (css/)
 - `tenders.css` - Unified tenders interface styling

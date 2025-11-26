@@ -150,8 +150,9 @@ Assign the following permissions to appropriate roles:
 ### Forms
 
 - **BetaTenderSettingsForm**: Module configuration
-- **ImageArrangementForm**: Tabledrag interface for grouping images
 - **ProcessTenderBatchForm**: Batch processing form
+- **UploadSourceForm**: Source media upload tool
+- **UploadScannedImagesForm**: Inline upload on the tenders dashboard
 
 ## Development
 

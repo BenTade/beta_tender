@@ -41,27 +41,6 @@ function beta_tender_help($route_name, RouteMatchInterface $route_match) {
  */
 function beta_tender_theme() {
   return [
-    'tender_dashboard' => [
-      'variables' => [
-        'dates' => [],
-        'sources_by_date' => [],
-      ],
-    ],
-    'tender_image_arrangement' => [
-      'variables' => [
-        'date' => NULL,
-        'source' => NULL,
-        'created_tenders' => [],
-        'unprocessed_images' => [],
-        'form' => NULL,
-      ],
-    ],
-    'tender_proofread_dashboard' => [
-      'variables' => [
-        'filters' => [],
-        'tenders' => [],
-      ],
-    ],
     'tender_main_page' => [
       'variables' => [
         'datelines' => [],

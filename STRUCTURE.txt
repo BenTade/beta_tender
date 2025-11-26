@@ -43,13 +43,13 @@ Root Directory:
 │   │
 │   └── Form/
 │       ├── BetaTenderSettingsForm.php  # Settings form (85 lines)
-│       ├── ImageArrangementForm.php    # Tabledrag form (241 lines)
-│       └── ProcessTenderBatchForm.php  # Batch form (82 lines)
+│       ├── ProcessTenderBatchForm.php  # Batch form (82 lines)
+│       ├── UploadScannedImagesForm.php # Inline dashboard upload
+│       └── UploadSourceForm.php        # Standalone source upload
 │
 ├── templates/
-│   ├── tender-dashboard.html.twig           # Main dashboard template
-│   ├── tender-image-arrangement.html.twig   # Image arrangement template
-│   └── tender-proofread-dashboard.html.twig # Proofreading template
+│   ├── tender-main-page.html.twig           # Unified tenders template
+│   └── tender-dateline-detail.html.twig     # Dateline detail template
 │
 ├── css/
 │   └── tenders.css                     # Unified tenders UI styles
@@ -76,8 +76,9 @@ Controllers (2):
 
 Forms (3):
 - BetaTenderSettingsForm: Module configuration
-- ImageArrangementForm: Image grouping with tabledrag
 - ProcessTenderBatchForm: Batch trigger
+- UploadScannedImagesForm: Inline dashboard upload
+- UploadSourceForm: Source upload workflow
 
 Content Types (2):
 - Tender: Main content type with 10 fields
@@ -112,7 +113,7 @@ Total Statistics:
 ================
 - PHP Files: 11
 - Configuration Files: 41
-- Template Files: 3
+- Template Files: 2
 - JavaScript Files: 0
 - CSS Files: 1
 - Test Files: 2
