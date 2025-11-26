@@ -1,37 +1,3 @@
-dashboard:
-  version: 1.x
-  css:
-    theme:
-      css/dashboard.css: {}
-  js:
-    js/dashboard.js: {}
-  dependencies:
-    - core/jquery
-    - core/drupal
-
-image-arrangement:
-  version: 1.x
-  css:
-    theme:
-      css/image-arrangement.css: {}
-  js:
-    js/image-arrangement.js: {}
-  dependencies:
-    - core/jquery
-    - core/drupal
-    - core/drupal.tabledrag
-
-proofread:
-  version: 1.x
-  css:
-    theme:
-      css/proofread.css: {}
-  js:
-    js/proofread.js: {}
-  dependencies:
-    - core/jquery
-    - core/drupal
-
 tenders:
   version: 1.x
   css:

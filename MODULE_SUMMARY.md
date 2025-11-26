@@ -160,14 +160,10 @@ composer.json                 - Composer package definition
 - `tender-proofread-dashboard.html.twig` - Proofreading interface
 
 #### CSS (css/)
-- `dashboard.css` - Dashboard styling
-- `image-arrangement.css` - Tabledrag styling
-- `proofread.css` - Proofreading interface styling
+- `tenders.css` - Unified tenders interface styling
 
 #### JavaScript (js/)
-- `dashboard.js` - Dashboard interactivity
-- `image-arrangement.js` - Tabledrag enhancements
-- `proofread.js` - Proofreading features
+- _None currently_
 
 ### 7. Tests (tests/src/)
 
