@@ -2,8 +2,9 @@ name: Quick Checks
 
 on:
   push:
-    branches: [copilot/**]
+    branches: [main, develop, copilot/**]
   pull_request:
+    branches: [main, develop]
 
 jobs:
   quick-lint:
@@ -76,7 +77,7 @@ jobs:
           ✨ Quick Checks Complete
 
           For full testing including Drupal installation and
-          visual verification, see the "Drupal Module Tests" workflow.
+          visual verification, see the "Feature Demonstration with Visual Verification" workflow.
 
           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           EOF
