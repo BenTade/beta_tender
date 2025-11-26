@@ -200,7 +200,7 @@ composer.json                 - Composer package definition
 |-------|------|-------------|
 | title | string | Auto-generated from OCR text |
 | field_body | text_with_summary | OCR-derived tender body with required summary |
-| field_scanned_images | image (multiple) | Source image files |
+| field_source_media | entity_reference (media, multiple) | Linked source media (images/documents) |
 | field_tender_source | entity_reference | Source publication |
 | field_tender_announcement_number | string | Publication's announcement or tender number |
 | field_inviter_company_name | string | Company or organization inviting the tender |

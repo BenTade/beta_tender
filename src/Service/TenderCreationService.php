@@ -90,7 +90,7 @@ class TenderCreationService {
     try {
       // Extract OCR text from all images.
       $ocr_texts = [];
-      $file_ids = [];
+      $media_references = [];
       $source_id = NULL;
 
       foreach ($media_entities as $media) {
@@ -106,9 +106,11 @@ class TenderCreationService {
             if (!empty($ocr_text)) {
               $ocr_texts[] = $ocr_text;
             }
-            $file_ids[] = ['target_id' => $file->id()];
           }
         }
+
+        // Always reference the source media entity on the tender node.
+        $media_references[] = ['target_id' => $media->id()];
 
         // Get the source from the first media entity.
         if ($source_id === NULL && $media->hasField('field_media_source') && !$media->get('field_media_source')->isEmpty()) {
@@ -129,7 +131,7 @@ class TenderCreationService {
       $node = $node_storage->create([
         'type' => 'tender',
         'title' => $tender_data['title'],
-        'field_scanned_images' => $file_ids,
+        'field_source_media' => $media_references,
         'field_tender_source' => $source_id ? ['target_id' => $source_id] : [],
         'field_body' => [
           'value' => $full_ocr_text,
