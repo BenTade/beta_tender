@@ -46,6 +46,15 @@ class TenderOcrService {
   protected $fileSystem;
 
   /**
+   * The OCR image service from the ocr_image module.
+   *
+   * This service provides the getText() method for extracting text from images.
+   *
+   * @var object
+   */
+  protected $ocrImageService;
+
+  /**
    * Constructs a TenderOcrService object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -54,15 +63,20 @@ class TenderOcrService {
    *   The logger factory.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   The file system service.
+   * @param object $ocr_image_service
+   *   The OCR image service from the ocr_image module.
+   *   Must implement getText(string $file_path, string $language, int $limit).
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     LoggerChannelFactoryInterface $logger_factory,
-    FileSystemInterface $file_system
+    FileSystemInterface $file_system,
+    $ocr_image_service
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->logger = $logger_factory->get('beta_tender');
     $this->fileSystem = $file_system;
+    $this->ocrImageService = $ocr_image_service;
   }
 
   /**
@@ -96,7 +110,7 @@ class TenderOcrService {
     }
 
     // Check if ocr_image service is available.
-    if (!\Drupal::hasService('ocr_image.OcrImage')) {
+    if ($this->ocrImageService === NULL) {
       $this->logger->error('OCR Image service is not available. Please install and enable the ocr_image module.');
       return FALSE;
     }
@@ -189,8 +203,7 @@ class TenderOcrService {
     // Use the ocr_image service to extract text.
     // Language: amh+eng (Amharic + English)
     // Limit: 0 (no word limit).
-    $ocr_service = \Drupal::service('ocr_image.OcrImage');
-    $result = $ocr_service->getText($file_path, self::DEFAULT_LANGUAGES, 0);
+    $result = $this->ocrImageService->getText($file_path, self::DEFAULT_LANGUAGES, 0);
 
     if (isset($result['full_text']) && !empty(trim($result['full_text']))) {
       return trim($result['full_text']);
@@ -256,20 +269,8 @@ class TenderOcrService {
       return;
     }
 
-    // Get the current format or use a default.
-    $format = 'plain_text';
-    if (!$node->get('field_body')->isEmpty()) {
-      $current_format = $node->get('field_body')->format;
-      if ($current_format) {
-        $format = $current_format;
-      }
-    }
-
-    // Check if 'content' format exists and use it.
-    $format_storage = $this->entityTypeManager->getStorage('filter_format');
-    if ($format_storage && $format_storage->load('content')) {
-      $format = 'content';
-    }
+    // Resolve the text format to use.
+    $format = $this->resolveBodyFormat($node);
 
     // Generate summary from the text.
     $summary = $this->generateSummary($text);
@@ -280,6 +281,39 @@ class TenderOcrService {
       'format' => $format,
     ]);
     $node->save();
+  }
+
+  /**
+   * Resolve the text format to use for the body field.
+   *
+   * Priority:
+   * 1. Use existing format from the current field value if present.
+   * 2. Try to use 'content' format if it exists.
+   * 3. Fall back to 'plain_text'.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The tender node.
+   *
+   * @return string
+   *   The format ID to use.
+   */
+  protected function resolveBodyFormat(NodeInterface $node): string {
+    // First, try to preserve existing format.
+    if ($node->hasField('field_body') && !$node->get('field_body')->isEmpty()) {
+      $current_format = $node->get('field_body')->format;
+      if ($current_format) {
+        return $current_format;
+      }
+    }
+
+    // Try 'content' format if available.
+    $format_storage = $this->entityTypeManager->getStorage('filter_format');
+    if ($format_storage && $format_storage->load('content')) {
+      return 'content';
+    }
+
+    // Default to plain_text.
+    return 'plain_text';
   }
 
   /**

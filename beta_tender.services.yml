@@ -9,4 +9,4 @@ services:
 
   beta_tender.tender_ocr:
     class: Drupal\beta_tender\Service\TenderOcrService
-    arguments: ['@entity_type.manager', '@logger.factory', '@file_system']
+    arguments: ['@entity_type.manager', '@logger.factory', '@file_system', '@ocr_image.OcrImage']

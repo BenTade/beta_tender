@@ -2,9 +2,12 @@
 
 namespace Drupal\beta_tender\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\beta_tender\Service\TenderOcrService;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,12 +32,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPluginInterface {
 
+  use StringTranslationTrait;
+
   /**
    * The tender OCR service.
    *
    * @var \Drupal\beta_tender\Service\TenderOcrService
    */
   protected $tenderOcrService;
+
+  /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
 
   /**
    * Constructs an OcrTenderImagesAction object.
@@ -47,15 +59,19 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
    *   The plugin implementation definition.
    * @param \Drupal\beta_tender\Service\TenderOcrService $tender_ocr_service
    *   The tender OCR service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    TenderOcrService $tender_ocr_service
+    TenderOcrService $tender_ocr_service,
+    MessengerInterface $messenger
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->tenderOcrService = $tender_ocr_service;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -66,7 +82,8 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('beta_tender.tender_ocr')
+      $container->get('beta_tender.tender_ocr'),
+      $container->get('messenger')
     );
   }
 
@@ -80,7 +97,7 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
 
     // Check if this is a tender node.
     if ($entity->bundle() !== 'tender') {
-      \Drupal::messenger()->addWarning(t('OCR action can only be performed on tender nodes.'));
+      $this->messenger->addWarning($this->t('OCR action can only be performed on tender nodes.'));
       return;
     }
 
@@ -88,12 +105,12 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
     $success = $this->tenderOcrService->processOcrForTender($entity);
 
     if ($success) {
-      \Drupal::messenger()->addStatus(t('OCR completed successfully for tender: @title', [
+      $this->messenger->addStatus($this->t('OCR completed successfully for tender: @title', [
         '@title' => $entity->label(),
       ]));
     }
     else {
-      \Drupal::messenger()->addError(t('OCR processing failed for tender: @title', [
+      $this->messenger->addError($this->t('OCR processing failed for tender: @title', [
         '@title' => $entity->label(),
       ]));
     }
@@ -105,12 +122,12 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\node\NodeInterface $object */
     if (!$object instanceof NodeInterface) {
-      return $return_as_object ? \Drupal\Core\Access\AccessResult::forbidden() : FALSE;
+      return $return_as_object ? AccessResult::forbidden() : FALSE;
     }
 
     // Only allow on tender nodes.
     if ($object->bundle() !== 'tender') {
-      return $return_as_object ? \Drupal\Core\Access\AccessResult::forbidden() : FALSE;
+      return $return_as_object ? AccessResult::forbidden() : FALSE;
     }
 
     // Check if user has permission to use OCR action.
@@ -123,8 +140,8 @@ class OcrTenderImagesAction extends ActionBase implements ContainerFactoryPlugin
 
     if ($return_as_object) {
       return $result
-        ? \Drupal\Core\Access\AccessResult::allowed()
-        : \Drupal\Core\Access\AccessResult::forbidden();
+        ? AccessResult::allowed()
+        : AccessResult::forbidden();
     }
 
     return $result;
