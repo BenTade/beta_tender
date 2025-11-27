@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - beta_tender
+    - node
+id: beta_tender_ocr_images
+label: 'OCR tender source images'
+type: node
+plugin: beta_tender_ocr_images
+configuration: {  }
