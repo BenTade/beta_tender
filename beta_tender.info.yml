@@ -15,3 +15,4 @@ dependencies:
   - drupal:text
   - drupal:user
   - drupal:content_moderation
+  - ocr_image:ocr_image

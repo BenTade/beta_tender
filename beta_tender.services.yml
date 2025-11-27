@@ -6,3 +6,7 @@ services:
   beta_tender.batch_service:
     class: Drupal\beta_tender\Service\TenderBatchService
     arguments: ['@beta_tender.tender_creation', '@entity_type.manager', '@logger.factory']
+
+  beta_tender.tender_ocr:
+    class: Drupal\beta_tender\Service\TenderOcrService
+    arguments: ['@entity_type.manager', '@logger.factory', '@file_system']

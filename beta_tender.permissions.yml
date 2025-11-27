@@ -10,3 +10,7 @@
 'process tender images':
   title: 'Process Tender Images'
   description: 'Upload source media and run batch processing'
+
+'use tender ocr action':
+  title: 'Use Tender OCR Action'
+  description: 'Perform OCR on tender source media images to extract text into the tender body'
